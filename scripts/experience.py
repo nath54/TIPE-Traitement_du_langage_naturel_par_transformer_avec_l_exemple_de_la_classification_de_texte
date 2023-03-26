@@ -82,12 +82,12 @@ class Experience:
         #
         self.model_name = model_name
         print("Loading the model...")
-        self.model = FullModelBertClassifier(classifier_model)
+        self.model = FullModelBertClassifier(classifier_model).to(self.device)
         print("Loading the tokenizer...")
         self.tokenizer = self.load_tokenizer()
         print("Loading the loss function and the optimizer...")
-        self.loss_fn = nn.MSELoss()
-        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
+        self.loss_fn = nn.MSELoss().to(self.device)
+        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.0002)
         #
         self.train_dataset = ExpDataset(self.tokenizer, train, self)
         self.test_dataset = ExpDataset(self.tokenizer, test, self)
@@ -160,13 +160,15 @@ class Experience:
         #
         data_sampler = RandomSampler(self.train_dataset, num_samples=500)
         dataloader = DataLoader(self.train_dataset, 16, sampler=data_sampler)
-        testloader = DataLoader(self.test_dataset, 16, sampler=data_sampler)
+        test_sampler = RandomSampler(self.test_dataset, num_samples=500)
+        testloader = DataLoader(self.test_dataset, 16, sampler=test_sampler)
+        #
+        last_opt_cg = 0
         #
         print("Preparing the model to train...")
         self.model.to(self.device)
         self.model.train()
         #
-        i = 0
         for epoch in range(epochs):
             
             dmoys_epoch = []
@@ -184,13 +186,12 @@ class Experience:
                 label = dl['target'].to(self.device)
                 label = label.unsqueeze(1)
 
-                
                 self.optimizer.zero_grad()
                 
                 output = self.model(
                     ids=ids,
                     mask=mask,
-                    token_type_ids=token_type_ids)
+                    token_type_ids=token_type_ids).to(self.device)
                 label = label.type_as(output)
 
                 loss = self.loss_fn(output,label)
@@ -198,15 +199,13 @@ class Experience:
                 losses_epoch.append(loss.item())
                 
                 self.optimizer.step()
-                
-                pred = output
 
-                dists = [abs(a[0]-b[0]) for a, b in zip(pred, label)]
+                dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
                 dmoy = sum(dists)/len(dists)
                 dmoys_epoch.append(dmoy)
                 
-                num_correct = sum(1 for a, b in zip(pred, label) if abs(a[0]-b[0]) <= 0.1 )
-                num_samples = pred.shape[0]
+                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
+                num_samples = output.shape[0]
                 accuracy = num_correct/num_samples
 
                 accuracy_epoch.append(accuracy)
@@ -217,7 +216,6 @@ class Experience:
                 loop.set_description(f'Epoch={epoch}/{epochs}')
                 loop.set_postfix(loss=loss.item(),acc=accuracy)
 
-                i += 1
             
             tb.add_scalar("Loss", sum(losses_epoch)/len(losses_epoch), epoch)
             tb.add_scalar("Accuracy", sum(accuracy_epoch)/len(accuracy_epoch), epoch)
@@ -227,7 +225,7 @@ class Experience:
             #     tb.add_histogram(name,weight, epoch)
             #     tb.add_histogram(f'{name}.grad',weight.grad, epoch)
 
-            self.save_model_state(self.root_dir+"torch_saves/"+self.model_name+".pt")
+            self.save_model_state(self.root_dir + "torch_saves/"+self.model_name+"_state.pt")
 
             # On va tester le modèle sur le test dataset
 
@@ -235,37 +233,63 @@ class Experience:
             dmoys_epoch_test = []
             losses_epoch_test = []
             accuracy_epoch_test = []
-            loop_test=tqdm(enumerate(dataloader),leave=False,total=len(dataloader))
+            loop_test=tqdm(enumerate(testloader),leave=False,total=len(testloader))
             for batch, dl in loop_test:
                 ids = dl['ids'].to(self.device)
                 token_type_ids = dl['token_type_ids'].to(self.device)
                 mask = dl['mask'].to(self.device)
                 label = dl['target'].to(self.device)
                 label = label.unsqueeze(1)
-                pred = self.model(
+                
+                output = self.model(
                     ids=ids,
                     mask=mask,
                     token_type_ids=token_type_ids)
                 label = label.type_as(output)
-                #
+
                 loss = self.loss_fn(output,label)
                 loss.backward()
                 losses_epoch_test.append(loss.item())
-                dists = [abs(a[0]-b[0]) for a, b in zip(pred, label)]
+
+                dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
                 dmoy = sum(dists)/len(dists)
                 dmoys_epoch_test.append(dmoy)
-                num_correct = sum(1 for a, b in zip(pred, label) if abs(a[0]-b[0]) <= 0.1 )
-                num_samples = pred.shape[0]
+                
+                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
+                num_samples = output.shape[0]
                 accuracy = num_correct/num_samples
+
                 accuracy_epoch_test.append(accuracy)
-                # Show progress while testing
+                
+                print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                
+                # Show progress while training
                 loop_test.set_description(f'Epoch={epoch}/{epochs}')
                 loop_test.set_postfix(loss=loss.item(),acc=accuracy)
 
+
             
-            tb.add_scalar("Loss Test", sum(losses_epoch_test)/len(losses_epoch), epoch)
-            tb.add_scalar("Accuracy Test", sum(accuracy_epoch_test)/len(accuracy_epoch), epoch)
-            tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch), epoch)
+            tb.add_scalar("Loss Test", sum(losses_epoch_test)/len(losses_epoch_test), epoch)
+            tb.add_scalar("Accuracy Test", sum(accuracy_epoch_test)/len(accuracy_epoch_test), epoch)
+            tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch_test), epoch)
+
+
+            # Update optimizer learning rate if needed
+
+            if last_opt_cg >= 10:
+                mll = sum(losses_epoch[-5:])/5
+                dlm = [abs(mll-losses_epoch[-i]) for i in range(1, 6)]
+                dlm_moy = sum(dlm)/5
+                if dlm_moy < 0.001:
+                    for g in self.optimizer.param_groups:
+                        g['lr'] = g['lr']/2.0
+                    # 
+                    print("\n\nLearning rate changed to "+str(self.optimizer.param_groups[0]['lr'])+" !!!")
+
+                else:
+                    last_opt_cg += 1
+            else:
+                last_opt_cg += 1
 
 
 

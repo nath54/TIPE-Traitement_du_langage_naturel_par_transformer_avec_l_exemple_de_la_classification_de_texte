@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     experience = Experience("devexp_1", train, test, classifier_model)
 
-    experience.train_model(50)
+    experience.train_model(100)
 
     # experience.save_model_state()
 
