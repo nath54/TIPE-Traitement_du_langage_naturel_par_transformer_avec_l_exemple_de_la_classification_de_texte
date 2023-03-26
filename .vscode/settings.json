@@ -1,0 +1,12 @@
+{
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/scripts"
+    ],
+    "powermode.presets": "particles",
+    "powermode.shake.intensity": 1,
+    "powermode.explosions.maxExplosions": 1,
+    "powermode.explosions.offset": 0,
+    "powermode.explosions.size": 4,
+    "powermode.combo.counterSize": 2,
+    "powermode.combo.timeout": 20
+}
