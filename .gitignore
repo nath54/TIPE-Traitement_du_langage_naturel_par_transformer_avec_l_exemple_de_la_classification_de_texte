@@ -1,2 +1,6 @@
 data/*
 torch_saves/*
+events.out.*
+*.pyc
+scripts/__pycache__/*
+*.pt

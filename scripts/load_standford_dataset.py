@@ -75,13 +75,23 @@ def main_sdf_dataset_load():
     Y_train = []
     Y_test = []
     #
+    # nb_max = 10000
+    # i = 0
     for k in train.keys():
         X_train.append( train[k] )
         Y_train.append( labels[k] )
+        # i += 1
+        # if i >= nb_max:
+        #     break
     #
+    # nb_max = 10000
+    # i = 0
     for k in test.keys():
         X_test.append( test[k] )
         Y_test.append( labels[k] )
+        # i += 1
+        # if i >= nb_max:
+        #     break
     #
     return (X_train, Y_train), (X_test, Y_test)
 

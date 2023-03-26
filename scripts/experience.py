@@ -8,12 +8,15 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from torch.utils.data import RandomSampler
 import torch.optim as optim
 import torch.nn.functional as F
 from torchsummary import summary
 from tqdm import tqdm
 import os
 from datetime import datetime
+from math import *
+from torch.utils.tensorboard import SummaryWriter
 
 
 """ Dataset """
@@ -83,7 +86,7 @@ class Experience:
         print("Loading the tokenizer...")
         self.tokenizer = self.load_tokenizer()
         print("Loading the loss function and the optimizer...")
-        self.loss_fn = nn.BCEWithLogitsLoss()
+        self.loss_fn = nn.MSELoss()
         self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
         #
         self.train_dataset = ExpDataset(self.tokenizer, train, self)
@@ -153,15 +156,23 @@ class Experience:
     # Train the model
     def train_model(self, epochs):
         #
-        loss_history = []
+        tb = SummaryWriter()
         #
-        dataloader = DataLoader(self.train_dataset, 32, shuffle=True)
+        data_sampler = RandomSampler(self.train_dataset, num_samples=500)
+        dataloader = DataLoader(self.train_dataset, 16, sampler=data_sampler)
+        testloader = DataLoader(self.test_dataset, 16, sampler=data_sampler)
         #
         print("Preparing the model to train...")
         self.model.to(self.device)
         self.model.train()
         #
+        i = 0
         for epoch in range(epochs):
+            
+            dmoys_epoch = []
+            losses_epoch = []
+            accuracy_epoch = []
+
             print("epoch : ", epoch)
             
             loop=tqdm(enumerate(dataloader),leave=False,total=len(dataloader))
@@ -184,36 +195,77 @@ class Experience:
 
                 loss = self.loss_fn(output,label)
                 loss.backward()
-                loss_history.append(loss.item())
+                losses_epoch.append(loss.item())
                 
                 self.optimizer.step()
                 
                 pred = output
 
+                dists = [abs(a[0]-b[0]) for a, b in zip(pred, label)]
+                dmoy = sum(dists)/len(dists)
+                dmoys_epoch.append(dmoy)
+                
                 num_correct = sum(1 for a, b in zip(pred, label) if abs(a[0]-b[0]) <= 0.1 )
                 num_samples = pred.shape[0]
                 accuracy = num_correct/num_samples
+
+                accuracy_epoch.append(accuracy)
                 
-                print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}')
+                print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
                 
                 # Show progress while training
                 loop.set_description(f'Epoch={epoch}/{epochs}')
                 loop.set_postfix(loss=loss.item(),acc=accuracy)
 
-                # Plot the loss curve after each epoch
-                # fig.clear()
-                # plt.plot(loss_history)
-                # plt.draw()
-               
-        # Saving the loss curve
+                i += 1
             
-        now = datetime.now()
-        dt_string = now.strftime("d%d_m%m_Y%Y_h%H_m%M_s%S")
-        f = open(self.root_dir+"torch_saves/"+self.model_name+"_loss_"+dt_string+".txt", "w")
-        f.write("\n".join(loss_history))
-        f.close()
+            tb.add_scalar("Loss", sum(losses_epoch)/len(losses_epoch), epoch)
+            tb.add_scalar("Accuracy", sum(accuracy_epoch)/len(accuracy_epoch), epoch)
+            tb.add_scalar("Distance Moy", sum(dmoys_epoch)/len(dmoys_epoch), epoch)
 
+            # for name, weight in self.model.classifier.named_parameters():
+            #     tb.add_histogram(name,weight, epoch)
+            #     tb.add_histogram(f'{name}.grad',weight.grad, epoch)
 
+            self.save_model_state(self.root_dir+"torch_saves/"+self.model_name+".pt")
+
+            # On va tester le modèle sur le test dataset
+
+            
+            dmoys_epoch_test = []
+            losses_epoch_test = []
+            accuracy_epoch_test = []
+            loop_test=tqdm(enumerate(dataloader),leave=False,total=len(dataloader))
+            for batch, dl in loop_test:
+                ids = dl['ids'].to(self.device)
+                token_type_ids = dl['token_type_ids'].to(self.device)
+                mask = dl['mask'].to(self.device)
+                label = dl['target'].to(self.device)
+                label = label.unsqueeze(1)
+                pred = self.model(
+                    ids=ids,
+                    mask=mask,
+                    token_type_ids=token_type_ids)
+                label = label.type_as(output)
+                #
+                loss = self.loss_fn(output,label)
+                loss.backward()
+                losses_epoch_test.append(loss.item())
+                dists = [abs(a[0]-b[0]) for a, b in zip(pred, label)]
+                dmoy = sum(dists)/len(dists)
+                dmoys_epoch_test.append(dmoy)
+                num_correct = sum(1 for a, b in zip(pred, label) if abs(a[0]-b[0]) <= 0.1 )
+                num_samples = pred.shape[0]
+                accuracy = num_correct/num_samples
+                accuracy_epoch_test.append(accuracy)
+                # Show progress while testing
+                loop_test.set_description(f'Epoch={epoch}/{epochs}')
+                loop_test.set_postfix(loss=loss.item(),acc=accuracy)
+
+            
+            tb.add_scalar("Loss Test", sum(losses_epoch_test)/len(losses_epoch), epoch)
+            tb.add_scalar("Accuracy Test", sum(accuracy_epoch_test)/len(accuracy_epoch), epoch)
+            tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch), epoch)
 
 
 
