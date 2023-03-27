@@ -87,7 +87,7 @@ class Experience:
         self.tokenizer = self.load_tokenizer()
         print("Loading the loss function and the optimizer...")
         self.loss_fn = nn.MSELoss().to(self.device)
-        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.0002)
+        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.00001)
         #
         self.train_dataset = ExpDataset(self.tokenizer, train, self)
         self.test_dataset = ExpDataset(self.tokenizer, test, self)
@@ -158,9 +158,9 @@ class Experience:
         #
         tb = SummaryWriter()
         #
-        data_sampler = RandomSampler(self.train_dataset, num_samples=500)
+        data_sampler = RandomSampler(self.train_dataset, num_samples=100)
         dataloader = DataLoader(self.train_dataset, 16, sampler=data_sampler)
-        test_sampler = RandomSampler(self.test_dataset, num_samples=500)
+        test_sampler = RandomSampler(self.test_dataset, num_samples=50)
         testloader = DataLoader(self.test_dataset, 16, sampler=test_sampler)
         #
         last_opt_cg = 0
