@@ -1,0 +1,138 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{natbib}         % Pour la bibliographie
+\usepackage{url}            % Pour citer les adresses web
+\usepackage[T1]{fontenc}    % Encodage des accents
+\usepackage[utf8]{inputenc} % Lui aussi
+\usepackage[frenchb]{babel} % Pour la traduction française
+\usepackage{numprint}       % Histoire que les chiffres soient bien
+
+\usepackage{amsmath}        % La base pour les maths
+\usepackage{mathrsfs}       % Quelques symboles supplémentaires
+\usepackage{amssymb}        % encore des symboles.
+\usepackage{amsfonts}       % Des fontes, eg pour \mathbb.
+
+\usepackage[svgnames]{xcolor} % De la couleur
+\usepackage{geometry}       % Gérer correctement la taille
+
+%%% Si jamais vous voulez changer de police: décommentez les trois 
+%\usepackage{tgpagella}
+%\usepackage{tgadventor}
+%\usepackage{inconsolata}
+
+%%% Pour L'utilisation de Python
+\usepackage{pythontex}
+
+\usepackage{graphicx} % inclusion des graphiques
+\usepackage{wrapfig}  % Dessins dans le texte.
+
+\usepackage{tikz}     % Un package pour les dessins (utilisé pour l'environnement {code})
+\usepackage[framemethod=TikZ]{mdframed}
+% Un environnement pour bien présenter le code informatique
+\newenvironment{code}{%
+\begin{mdframed}[linecolor=Green,innerrightmargin=30pt,innerleftmargin=30pt,
+backgroundcolor=Black!5,
+skipabove=10pt,skipbelow=10pt,roundcorner=5pt,
+splitbottomskip=6pt,splittopskip=12pt]
+}{%
+\end{mdframed}
+}
+
+% Mettez votre titre et votre nom ci-après
+\title{Rapport de TIPE \\
+Le traitement du langage naturel par transformers illustré par un exemple pour la classification de texte}
+\author{Nathan Cerisara, MPI, \oldstylenums{2022}-\oldstylenums{2023}}
+%% À décommenter si vous ne voulez pas que la date apparaisse explicitement
+%\date{}
+
+% Un raccourci pour composer les unités correctement (en droit)
+% Exemple: $v = 10\U{m.s^{-1}}$
+\newcommand{\U}[1]{~\mathrm{#1}}
+
+% Pour discuter avec le prof dans le document: le premier argument est 
+% le nom de celui qui fait la remarque et le second la remarque 
+% proprement dite: \question{jj}{Que voulez-vous dire par là ?}
+% \reponse{Droopy}{I'm very happy...}
+\usepackage{todonotes}
+\newcommand{\question}[2]{\todo[inline,author=#1]{#2}}
+\newcommand{\reponse}[2]{\todo[inline,color=green,author=#1]{#2}}
+
+% Les guillemets \ofg{par exemple}
+\newcommand{\ofg}[1]{\og{}#1\fg{}}
+% Le d des dérivées doit être droit: \frac{\dd x}{\dd t}
+\newcommand{\dd}{\text{d}}
+
+
+% NB: le script TeXcount permet de compter les mots utilisés dans chaque section d'un document LaTeX. Vous en trouverez une version en ligne à l'adresse
+% http://app.uio.no/ifi/texcount/online.php
+% Il suffit d'y copier l'ensemble du présent document (via Ctrl-A/Ctrl-C puis Ctrl-V dans la fenêtre idoine) pour obtenir le récapitulatif tout en bas de la page qui s'ouvre alors.
+
+% Pour récupérer les bonnes entrées bibliographiques, je vous conseille l'usage de scholar.google.fr pour les recherches
+% et la récupération des entrée BibTeX comme décrit dans cette vidéo: https://www.youtube.com/watch?v=X-9T2Oaj-5A
+
+% Quelques macros utiles
+% La dérivée temporelle, tellement courante en physique, avec les d droits
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+% Des parenthèses, crochets et accolades qui s'adaptent automatiquement à la taille de ce qu'il y a dedans
+\newcommand{\pa}[1]{\left(#1\right)}
+\newcommand{\pac}[1]{\left[#1\right]}
+\newcommand{\paa}[1]{\left\{#1\right\}}
+% Un raccourci pour écrire une constante
+\newcommand{\cte}{\text{C}^{\text{te}}}
+% Pour faire des indices en mode texte (comme les énergie potentielles)
+\newcommand{\e}[1]{_{\text{#1}}}
+% Le produit vectoriel a un nom bizarre:
+\newcommand{\vectoriel}{\wedge}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+%	Find something meaningful to say in english in order to describe the present report...
+
+    In recent years, there has been a historic advance in artificial intelligence, in many subfields (vision, language, health, ...). And among the major advances in the field of natural language processing, the transformer architecture has played a very important role, as shown by the performance of GPT models that use this architecture.
+    
+    In this work, I try to understand how this architecture works, while experimenting with an exemple where I train a sentiment classification model based on BERT.
+\end{abstract}
+
+\section{L'Architecture Transformer}
+
+\subsection{Objectifs de cette architecture}
+
+	Dans le domaine du traitement du langage naturel, plusieurs problèmes se posent avec les différentes architectures utilisées antérieurement à l'architecture transformer : on 
+
+\subsection{Vision d'ensemble de l'architecture}
+
+\subsection{La transformation des mots en tokens à l'entrée du modèle}
+
+\subsection{La partie Encodeur}
+
+\subsubsection{Sa structure}
+
+\subsubsection{Les Matrices d'Attention}
+
+\subsection{La partie Décodeur}
+
+\subsubsection{Sa structure}
+
+\subsubsection{Les Matrices de Cross-Attention}
+
+\section{Preuve}
+
+\section{Application Personnelle de ce modèle}
+
+\subsection{Objectif / Rapport à la ville}
+
+\subsection{Le modèle BERT}
+
+\subsection{La structure complète du réseau utilisé}
+
+\subsection{Les données et l'apprentissage}
+
+\subsection{Les résultats}
+
+\section{Bilan}
+
+\section{Annexe}
+
+\end{document}

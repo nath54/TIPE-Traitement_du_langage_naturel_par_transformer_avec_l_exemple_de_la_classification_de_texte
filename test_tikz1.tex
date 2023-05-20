@@ -1,0 +1,120 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{natbib}         % Pour la bibliographie
+\usepackage{url}            % Pour citer les adresses web
+\usepackage[T1]{fontenc}    % Encodage des accents
+\usepackage[utf8]{inputenc} % Lui aussi
+\usepackage[frenchb]{babel} % Pour la traduction française
+\usepackage{numprint}       % Histoire que les chiffres soient bien
+
+\usepackage{amsmath}        % La base pour les maths
+\usepackage{mathrsfs}       % Quelques symboles supplémentaires
+\usepackage{amssymb}        % encore des symboles.
+\usepackage{amsfonts}       % Des fontes, eg pour \mathbb.
+
+\usepackage[svgnames]{xcolor} % De la couleur
+\usepackage{geometry}       % Gérer correctement la taille
+
+\usepackage{tikz, pgfplots}
+\usetikzlibrary{positioning, shapes, arrows, shadows}
+
+\title{Test Tikz}
+\author{Me}
+
+\begin{document}
+
+\section{Structure globale de l'architecture transformer}
+
+Le schéma de l'achitecture dans le cas de la génération en mode inférence est le suivant :
+
+\begin{center}
+\begin{tikzpicture}[
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+Eblock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 50px, minimum width = 100px},
+Dblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Fleche1/.style = {->, thick, shorten <=2mm, shorten >=2mm},
+Fleche2/.style= {->,orange, thick, shorten <=1px, shorten >= 1px}
+]
+
+%Nodes
+
+%Encoder Blocks
+\node[Block] (Tok) {Tokenizer};
+\node[Block, align=center] (EPE)  [above=15px of Tok] {Embedding + \\Positional Encoding};
+\node[Eblock] (Enc1) [above=15px of EPE] {Encoder $1$};
+\node[Eblock] (Enc2) [above=15px of Enc1] {Encoder $2$};
+\node (dots1) [above=15px of Enc2] {$\dots$};
+\node[Eblock] (EncN) [above=15px of dots1] {Encoder $N_e$};
+
+%Encoder Input
+\node (Einp) [below=20px of Tok] {};
+\node[font=\footnotesize] (Einp_dots) [right=0px of Einp] {$\dots$};
+\node[Vect] (Einp_2) [left=5px of Einp_dots] {$x_2$};
+\node[Vect] (Einp_1) [left=5px of Einp_2] {$x_1$};
+\node[Vect] (Einp_N) [right=5px of Einp_dots] {$x_N$};
+\node (txt_Einp) [left=5px of Einp_1] {Input};
+
+%Encoder Output
+\node (Eout) [above=20px of EncN] {};
+\node[font=\footnotesize] (Eout_dots) [right=0px of Eout] {$\dots$};
+\node[Vect] (Eout_2) [left= 5px of Eout_dots] {$z_2$};
+\node[Vect] (Eout_1) [left=5px of Eout_2] {$z_1$};
+\node[Vect] (Eout_N) [right=5px of Eout_dots] {$z_N$};
+\node (txt_Eout) [left=5px of Eout_1] {Encoder output};
+
+%Decoder Blocks
+\node[Dblock] (Dec1) [right=75px of Enc1] {Decoder $1$};
+\node[Dblock] (Dec2) [above=15px of Dec1] {Decoder $2$};
+\node (dots2) [above=15px of Dec2] {$\dots$};
+\node[Dblock] (DecN) [above=15px of dots2] {Decoder $N_d$};
+\node[Block, align=center] (Probs) [above=15px of DecN] {Predict the probabilities\\ of the next token};
+
+%Decoder Input
+\node (Dinp) [below=20px of Dec1] {};
+\node[font=\footnotesize] (Dinp_dots) [right=0px of Dinp] {$\dots$};
+\node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$y_2$};
+\node[Vect] (Dinp_1) [left=5px of Dinp_2] {$y_1$};
+\node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$y_N$};
+\node (txt_Dinp) [right=5px of Dinp_N] {Decoder Masked Input};
+
+%Arrows
+\draw[Fleche1] (Einp.north) to (Tok.south);
+\draw[Fleche1] (Tok.north) to (EPE.south);
+\draw[Fleche1] (EPE.north) to (Enc1.south);
+\draw[Fleche1] (Enc1.north) to (Enc2.south);
+\draw[Fleche1] (Enc2.north) to (dots1.south);
+\draw[Fleche1] (dots1.north) to (EncN.south);
+\draw[Fleche1] (EncN.north) to (Eout.south);
+
+\draw[Fleche1] (Dinp.north) to (Dec1.south);
+\draw[Fleche1] (Dec1.north) to (Dec2.south);
+\draw[Fleche1] (Dec2.north) to (dots2.south);
+\draw[Fleche1] (dots2.north) to (DecN.south);
+\draw[Fleche1] (DecN.north) to (Probs.south);
+
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (Dec1.west);
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (Dec2.west);
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (DecN.west);
+\end{tikzpicture}
+\end{center}
+
+
+\section{Structure de la partie encoder}
+
+
+\begin{center}
+\begin{tikzpicture}
+
+\end{tikzpicture}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+\end{document}
