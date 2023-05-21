@@ -1,0 +1,401 @@
+\documentclass[12pt]{beamer}
+\usepackage{natbib}         % Pour la bibliographie
+\usepackage{url}            % Pour citer les adresses web
+\usepackage[T1]{fontenc}    % Encodage des accents
+\usepackage[utf8]{inputenc} % Lui aussi
+\usepackage[frenchb]{babel} % Pour la traduction française
+\usepackage{numprint}       % Histoire que les chiffres soient bien
+
+\usepackage{amsmath}        % La base pour les maths
+\usepackage{mathrsfs}       % Quelques symboles supplémentaires
+\usepackage{amssymb}        % encore des symboles.
+\usepackage{amsfonts}       % Des fontes, eg pour \mathbb.
+
+\usepackage{multicol}         % Pour pouvoir séparer l'espace en plusieurs colonnes
+
+%\usepackage[svgnames]{xcolor} % De la couleur
+\usepackage{geometry}       % Gérer correctement la taille
+
+\usepackage{tikz, pgfplots}
+\usetikzlibrary{positioning} % Add this line to load the positioning library
+
+\usetheme{metropolis}
+
+\title{Le traitement du langage naturel par transformers illustré par un exemple pour la classification de texte}
+
+\author{Cerisara Nathan, MPI}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%% SOMMAIRE %%%%%%%%%
+
+\begin{frame}{Sommaire}
+
+\begin{itemize}
+  \item Architecture Transformer
+  	\begin{itemize}
+  	\setbeamertemplate{itemize item}{$\diamond$}
+  		\item Vectorisation du texte
+  		\item La partie Encodeur de l'architecture
+  		\item Les matrices d'Attention
+  		\item Le réseau Feed Forward
+  	\end{itemize}
+  \vspace{7px}
+  \item Application personnelle
+     \begin{itemize}
+     \setbeamertemplate{itemize item}{$\diamond$}
+      		\item Objectif / Rapport à la ville
+      		\item Le modèle BERT
+      		\item La structure du réseau de neurone utilisée
+      		\item Les données et l'apprentissage
+      		\item Les résultats
+     \end{itemize}
+     \vspace{7px}
+     \item Annexes
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%% PAGE 1 : L'architecture Transformer %%%%%%%%%
+
+\begin{frame}{L'architecture Transformer}
+Schéma de l'architecture dans le cas de la génération :
+
+\begin{center}
+
+\resizebox{!}{(\textheight * 8 / 11)}{%
+\begin{tikzpicture}[
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+Eblock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 30px, minimum width = 100px},
+Dblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 30px, minimum width = 100px},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px},
+Fleche2/.style= {->,orange, thick, shorten <=5px, shorten >= 5px},
+scale=2
+]
+
+%Nodes
+
+%Encoder Blocks
+\node[Block] (Tok) {Tokenizer};
+\node[Block, align=center] (EPE)  [above=15px of Tok] {Embedding + \\Positional Encoding};
+\node[Eblock] (Enc1) [above=15px of EPE] {Encoder $1$};
+\node[Eblock] (Enc2) [above=15px of Enc1] {Encoder $2$};
+\node (dots1) [above=15px of Enc2] {$\dots$};
+\node[Eblock] (EncN) [above=15px of dots1] {Encoder $N_e$};
+
+%Encoder Input
+\node (Einp) [below=20px of Tok] {};
+\node[font=\footnotesize] (Einp_dots) [right=0px of Einp] {$\dots$};
+\node[Vect] (Einp_2) [left=5px of Einp_dots] {$x_2$};
+\node[Vect] (Einp_1) [left=5px of Einp_2] {$x_1$};
+\node[Vect] (Einp_N) [right=5px of Einp_dots] {$x_N$};
+\node (txt_Einp) [left=5px of Einp_1] {Input};
+
+%Encoder Output
+\node (Eout) [above=20px of EncN] {};
+\node[font=\footnotesize] (Eout_dots) [right=0px of Eout] {$\dots$};
+\node[Vect] (Eout_2) [left= 5px of Eout_dots] {$z_2$};
+\node[Vect] (Eout_1) [left=5px of Eout_2] {$z_1$};
+\node[Vect] (Eout_N) [right=5px of Eout_dots] {$z_N$};
+\node (txt_Eout) [left=5px of Eout_1] {Encoder output};
+
+%Decoder Blocks
+\node[Dblock] (Dec1) [right=75px of Enc1] {Decoder $1$};
+\node[Dblock] (Dec2) [above=15px of Dec1] {Decoder $2$};
+\node (dots2) [above=15px of Dec2] {$\dots$};
+\node[Dblock] (DecN) [above=15px of dots2] {Decoder $N_d$};
+\node[Block, align=center] (Probs) [above=15px of DecN] {Predict the probabilities\\ of the next token};
+
+%Decoder Input
+\node (Dinp) [below=20px of Dec1] {};
+\node[font=\footnotesize] (Dinp_dots) [right=0px of Dinp] {$\dots$};
+\node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$y_2$};
+\node[Vect] (Dinp_1) [left=5px of Dinp_2] {$y_1$};
+\node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$y_N$};
+\node (txt_Dinp) [right=5px of Dinp_N] {Decoder Masked Input};
+
+%Arrows
+\draw[Fleche1] (Einp.north) to (Tok.south);
+\draw[Fleche1] (Tok.north) to (EPE.south);
+\draw[Fleche1] (EPE.north) to (Enc1.south);
+\draw[Fleche1] (Enc1.north) to (Enc2.south);
+\draw[Fleche1] (Enc2.north) to (dots1.south);
+\draw[Fleche1] (dots1.north) to (EncN.south);
+\draw[Fleche1] (EncN.north) to (Eout.south);
+
+\draw[Fleche1] (Dinp.north) to (Dec1.south);
+\draw[Fleche1] (Dec1.north) to (Dec2.south);
+\draw[Fleche1] (Dec2.north) to (dots2.south);
+\draw[Fleche1] (dots2.north) to (DecN.south);
+\draw[Fleche1] (DecN.north) to (Probs.south);
+
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (Dec1.west);
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (Dec2.west);
+\draw[Fleche2] (Eout_N.east) .. controls +(right:25px) and +(left:25px) .. (DecN.west);
+\end{tikzpicture}
+}
+\end{center}
+\end{frame}
+
+%%%%%%%%% PAGE 2 : Vectorisation du texte %%%%%%%%%
+
+\begin{frame}{Vectorisation du texte}
+
+\end{frame}
+
+%%%%%%%%% PAGE 3 : Vectorisation du texte %%%%%%%%%
+
+\begin{frame}{La partie Encodeur}
+
+Schéma d'un block de la partie Encodeur de l'architecture Transformer :
+
+\begin{center}
+
+\resizebox{!}{(\textheight * 8 / 11)}{%
+\begin{tikzpicture}[
+EncBlock/.style = {rectangle, rounded corners, draw=green!30, fill=green!5, thick, dashed, minimum width=150px, minimum height=212px},
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+Ablock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 50px, minimum width = 100px},
+FFblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Circ/.style = {circle, draw=black, thick},
+Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+]
+
+%Encoder Input
+\node (Einp) {};
+\node[font=\footnotesize] (Einp_dots) [right=0px of Einp] {$\dots$};
+\node[Vect] (Einp_2) [left=5px of Einp_dots] {$x_2$};
+\node[Vect] (Einp_1) [left=5px of Einp_2] {$x_1$};
+\node[Vect] (Einp_N) [right=5px of Einp_dots] {$x_N$};
+\node (txt_Einp) [left=5px of Einp_1] {Input};
+
+%Global Encoder Block
+\node[EncBlock] (Enc) [above=10px of Einp] {};
+\node (Txt_Encoder) [left=8px of Enc] {Encoder Block};
+
+% MultiHead Self-Attention Block
+\node[Ablock] (Att) [above=15px of Einp] {MultiHead Self-Attention};
+\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+
+%Attention output
+\node (Aout) [above=15px of AN1] {};
+\node[font=\footnotesize] (Aout_dots) [right=0px of Aout] {$\dots$};
+\node[Vect] (Aout_2) [left=5px of Aout_dots] {$x_2$};
+\node[Vect] (Aout_1) [left=5px of Aout_2] {$x_1$};
+\node[Vect] (Aout_N) [right=5px of Aout_dots] {$x_N$};
+
+%FF block
+\node[FFblock] (FF) [above=15px of Aout] {Feed Forward Layer};
+\node[Block] (AN2) [above=15px of FF] {Add \& Normalize};
+
+%Encoder Output
+\node (Eout) [above=15px of AN2] {};
+\node[font=\footnotesize] (Eout_dots) [right=0px of Eout] {$\dots$};
+\node[Vect] (Eout_2) [left=5px of Eout_dots] {$x_2$};
+\node[Vect] (Eout_1) [left=5px of Eout_2] {$x_1$};
+\node[Vect] (Eout_N) [right=5px of Eout_dots] {$x_N$};
+\node (txt_Eout) [left=5px of Eout_1] {Output};
+
+%Arrows
+\draw[Fleche1] (Einp.north) to (Att.south);
+\draw[Fleche1] (Att.north) to (AN1.south);
+\draw[Fleche1] (AN1.north) to (Aout.south);
+\draw[Fleche1] (Aout.north) to (FF.south);
+\draw[Fleche1] (FF.north) to (AN2.south);
+\draw[Fleche1] (AN2.north) to (Eout.south);
+
+\draw[Fleche1] (Einp_N.east) .. controls +(right:45px) and +(right:45px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN1.east);
+\draw[Fleche1] (Aout_N.east) .. controls +(right:45px) and +(right:45px) .. node[Circ,scale=0.7, fill=white] {$+$} (AN2.east);
+\end{tikzpicture}
+}
+\end{center}
+\end{frame}
+
+%%%%%%%%% PAGE 4 : Matrices d'attention %%%%%%%%%
+
+\begin{frame}{Matrice d'attention}
+
+\end{frame}
+
+%%%%%%%%% PAGE 5 : Le réseau Feed Forward %%%%%%%%%
+
+\begin{frame}{Le réseau Feed Forward}
+
+
+\setlength{\columnsep}{50pt}
+\begin{multicols*}{2}[]
+
+\begin{center}
+\resizebox{(\textwidth * 6/ 11)}{!}{%
+\begin{tikzpicture}[
+Lin/.style = {rectangle, rounded corners, draw=red!30!yellow!50, fill =yellow!10, dashed, thick, minimum height = 15px, minimum width = 150px},
+Vect/.style = {circle, draw=purple!150!red, thick, font=\footnotesize, text width=8px, align=left},
+Vect2/.style = {circle, draw=purple!150!red, thick, font=\footnotesize, text width=8px, align=left},
+Circ/.style = {circle, draw=black, thick},
+Trait/.style = {-, shorten <=1px, shorten >= 1px},
+]
+
+
+%FF Input
+\node (FFinp) {};
+\node[font=\footnotesize] (FFinp_dots) [right=0px of FFinp] {$\dots$};
+\node[Vect] (FFinp_2) [left=10px of FFinp_dots] {$x_2$};
+\node[Vect] (FFinp_1) [left=10px of FFinp_2] {$x_1$};
+\node[Vect] (FFinp_N) [right=10px of FFinp_dots] {$x_N$};
+\node (txt_FFinp) [left=10px of FFinp_1] {Input $X$};
+
+%Linear1
+\node[Lin] (Lin1) [above=15px of FFinp] {};
+\node (Txt_lin1) [left=5px of Lin1] {Linear Layer 1};
+
+%Hidden Layer
+\node (Hl) [above= 15px of Lin1] {};
+\node[font=\footnotesize] (Hl_dots) [above= 45px of FFinp] {$\dots$};
+\node[Vect] (Hl_2) [left=10px of Hl_dots] {$h_2$};
+\node[Vect] (Hl_1) [left=10px of Hl_2] {$h_1$};
+\node[Vect2, minimum width=28px] (Hl_D1) [right=10px of Hl_dots] {$\!\!\!\! h_{D-1}$};
+\node[Vect] (Hl_D) [right=10px of Hl_D1] {$h_D$};
+\node (txt_Hl) [left=10px of Hl_1] {Hidden State $H$};
+
+%Linear2
+\node[Lin] (Lin2) [above=15px of Hl_dots] {};
+\node (Txt_lin2) [left=5px of Lin2] {Linear Layer 2};
+
+%FF Output
+\node (FFout)  [above=15px of Lin2] {};
+\node[font=\footnotesize] (FFout_dots) [right=0px of FFout] {$\dots$};
+\node[Vect] (FFout_2) [left=10px of FFout_dots] {$y_2$};
+\node[Vect] (FFout_1) [left=10px of FFout_2] {$y_1$};
+\node[Vect] (FFout_N) [right=10px of FFout_dots] {$y_N$};
+\node (txt_FFout) [left=10px of FFout_1] {Output $Y$};
+
+%Nodes Connections
+\draw[Trait] (FFinp_1.north) to (Hl_D.south);
+\draw[Trait] (FFinp_1.north) to (Hl_D1.south);
+\draw[Trait] (FFinp_1.north) to (Hl_2.south);
+\draw[Trait] (FFinp_1.north) to (Hl_1.south);
+
+\draw[Trait] (FFinp_2.north) to (Hl_D.south);
+\draw[Trait] (FFinp_2.north) to (Hl_D1.south);
+\draw[Trait] (FFinp_2.north) to (Hl_2.south);
+\draw[Trait] (FFinp_2.north) to (Hl_1.south);
+
+\draw[Trait] (FFinp_N.north) to (Hl_D.south);
+\draw[Trait] (FFinp_N.north) to (Hl_D1.south);
+\draw[Trait] (FFinp_N.north) to (Hl_2.south);
+\draw[Trait] (FFinp_N.north) to (Hl_1.south);
+
+\draw[Trait] (FFout_1.south) to (Hl_D.north);
+\draw[Trait] (FFout_1.south) to (Hl_D1.north);
+\draw[Trait] (FFout_1.south) to (Hl_2.north);
+\draw[Trait] (FFout_1.south) to (Hl_1.north);
+
+\draw[Trait] (FFout_2.south) to (Hl_D.north);
+\draw[Trait] (FFout_2.south) to (Hl_D1.north);
+\draw[Trait] (FFout_2.south) to (Hl_2.north);
+\draw[Trait] (FFout_2.south) to (Hl_1.north);
+
+\draw[Trait] (FFout_N.south) to (Hl_D.north);
+\draw[Trait] (FFout_N.south) to (Hl_D1.north);
+\draw[Trait] (FFout_N.south) to (Hl_2.north);
+\draw[Trait] (FFout_N.south) to (Hl_1.north);
+\end{tikzpicture}
+}
+\end{center}
+
+\columnbreak
+
+Couche linéaire : $X \mapsto X\cdot W^\top + B$
+
+\end{multicols*}
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 6 : Le réseau Feed Forward %%%%%%%%%
+
+\begin{frame}{Application Personnelle: Objectifs \& Rapport à la ville}
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 7 : Le modèle BERT %%%%%%%%%
+
+\begin{frame}{Le modèle BERT}
+
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 8 : La structure du réseau de neurone utilisée %%%%%%%%%
+
+\begin{frame}{La structure du réseau de neurone utilisée}
+
+
+\begin{center}
+
+\resizebox{(\textwidth)}{!}{%
+\begin{tikzpicture}[
+EncBlock/.style = {rectangle, rounded corners, draw=green!30, fill=green!5, thick, dashed, minimum width=150px, minimum height=212px},
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px, align=center},
+Bblock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 50px, minimum width = 100px, align=center},
+FFblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px, align=center},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Circ/.style = {circle, draw=black, thick},
+Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+]
+
+%Blocks
+\node (Inp) {``Input''};
+\node[Block] (BT) [right=25px of Inp] {BERT\\Tokenizer};
+\node[Bblock] (BE) [right=25px of BT] {BERT\\Encoder};
+\node[FFblock] (FFC) [right=25px of BE] {Feed Forward\\Classifier};
+\node[Vect] (Out) [right=25px of FFC] {$c$};
+
+%Arrows
+\draw[Fleche1] (Inp.east) to (BT.west);
+\draw[Fleche1] (BT.east) to (BE.west);
+\draw[Fleche1] (BE.east) to (FFC.west);
+\draw[Fleche1] (FFC.east) to (Out.west);
+
+\end{tikzpicture}
+}
+\end{center}
+
+
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 9 : Les données et l'apprentissage %%%%%%%%%
+
+\begin{frame}{Les données et l'apprentissage}
+
+
+\end{frame}
+
+
+
+%%%%%%%%% PAGE 10 : Les résultats %%%%%%%%%
+
+\begin{frame}{Les résultats}
+
+
+\end{frame}
+
+
+
+%%%%%%%%% PAGE 11 : Annexes %%%%%%%%%
+
+\begin{frame}{Annexes}
+
+
+\end{frame}
+
+
+
+\end{document}
