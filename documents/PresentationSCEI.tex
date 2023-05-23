@@ -140,10 +140,45 @@ scale=2
 \end{center}
 \end{frame}
 
-%%%%%%%%% PAGE 2 : Vectorisation du texte %%%%%%%%%
 
-\begin{frame}{Vectorisation du texte}
+%%%%%%%%% PAGE 2.1 : Tokenisation & Embeddings %%%%%%%%%
 
+\begin{frame}{Vectorisation du texte : Tokenisation du texte}
+
+La tokenisation est le processus de découpage d'une séquence de texte en unités discrètes appelées "tokens". Dans BERT, la tokenisation est réalisée à l'aide du tokenizer BERT inclus dans la bibliothèque Transformers. Le tokenizer prend en entrée une séquence de texte et renvoie une liste de tokens correspondants.
+
+Exemple : la phrase "C'est une phrase d'exemple." peut être tokenisée en ["C", "'", "est", "une", "phrase", "d", "'", "exemple", "."].
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 2.2 : Embeddings %%%%%%%%%
+
+\begin{frame}{Vectorisation du texte : Embeddings}
+
+Après la tokenisation, chaque token est converti en un vecteur de nombres réels appelé "embedding". Les embeddings captent les informations sémantiques et syntaxiques des tokens dans un espace vectoriel continu. Les embeddings de BERT sont appris lors de la phase de pré-entraînement du modèle sur de grandes quantités de données textuelles.
+
+\vspace{10px}
+
+\textbf{Exemple}
+
+Phrase d'entrée : "C'est une phrase d'exemple."
+
+Tokens : ["[CLS]", "C", "'", "est", "une", "phrase", "d", "'", "exemple", ".", "[SEP]"]
+
+Embeddings : \[[embedding_C, embedding_apostrophe, embedding_est, embedding_une, embedding_phrase, embedding_d, embedding_apostrophe, embedding_exemple, embedding_point]\]
+
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 2.3 : Positional Encoding %%%%%%%%%
+
+\begin{frame}{Vectorisation du texte : Positional Encoding}
+    Positional Encoding: Adding positional information to token embeddings.
+    Formula: $\text{Encoding}(\text{pos, 2i) = \sin(pos / (10000^(2i/d_model)))$, $\text{Encoding}(pos, 2i+1) = cos(pos / (10000^(2i/d_model)))$.
+    Example: Calculating positional encoding for each token and embedding dimension.
+    
 \end{frame}
 
 %%%%%%%%% PAGE 3 : Vectorisation du texte %%%%%%%%%
@@ -218,6 +253,10 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 %%%%%%%%% PAGE 4 : Matrices d'attention %%%%%%%%%
 
 \begin{frame}{Matrice d'attention}
+
+    Attention Matrices: Capture relationships and dependencies between tokens.
+    Calculation: Applying matrix operation between query, key, and value embeddings.
+    Interpretation: High values indicate strong correlations between tokens.
 
 \end{frame}
 
@@ -395,7 +434,6 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 \end{frame}
-
-
+s
 
 \end{document}
