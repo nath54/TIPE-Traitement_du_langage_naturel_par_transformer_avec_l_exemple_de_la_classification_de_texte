@@ -169,9 +169,9 @@ scale=2
 
 
 \begin{center}
-	\resizebox{!}{(\textheight * 4 / 17)}{
+	\resizebox{(\textwidth * 4 / 5)}{!}{%{(\textheight * 4 / 17)}{
 	
-	\begin{minipage}{(\textwidth * 10 / 9)}
+	\begin{minipage}{(\textwidth * 21  / 20)}
 		
 		\setlength{\columnsep}{80pt}
 	
@@ -180,9 +180,7 @@ scale=2
 		\textbf{Positional Encoding}
 		
 		$$p_k  = (s_0, c_1, \dots, s_{2i}, c_{2i+1}, \dots, s_N)$$
-		 
 		$$s_{2i} = \sin \left( k \cdot 10000^{- \frac{2i}{d_E}} \right)$$
-		
 		$$c_{2i+1} = \cos \left( k \cdot 10000^{- \frac{2i+1}{d_E}} \right)$$
 		
 		\columnbreak
@@ -306,9 +304,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{frame}{Matrice d'attention}
 
-    Attention Matrices: Capture relationships and dependencies between tokens.
-    Calculation: Applying matrix operation between query, key, and value embeddings.
-    Interpretation: High values indicate strong correlations between tokens.
+
 
 \end{frame}
 
