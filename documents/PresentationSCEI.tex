@@ -15,9 +15,11 @@
 
 %\usepackage[svgnames]{xcolor} % De la couleur
 \usepackage{geometry}       % Gérer correctement la taille
+\usepackage{array}
 
 \usepackage{tikz, pgfplots}
 \usetikzlibrary{positioning} % Add this line to load the positioning library
+\usetikzlibrary{fit}
 
 \usetheme{metropolis}
 
@@ -145,41 +147,91 @@ scale=2
 
 \begin{frame}{Vectorisation du texte : Tokenisation du texte}
 
-La tokenisation est le processus de découpage d'une séquence de texte en unités discrètes appelées "tokens". Dans BERT, la tokenisation est réalisée à l'aide du tokenizer BERT inclus dans la bibliothèque Transformers. Le tokenizer prend en entrée une séquence de texte et renvoie une liste de tokens correspondants.
+\textbf{Tokenizer (bert-base-uncased)}
 
-Exemple : la phrase "C'est une phrase d'exemple." peut être tokenisée en ["C", "'", "est", "une", "phrase", "d", "'", "exemple", "."].
+\textbf{Ex1 : }
 
-\end{frame}
+\ \textit{SENTENCE} : ``Neural Networks are so cool!''\\
+\ \textit{TOKENS} : $\begin{array}{ll} [101, 15756, 6125, 2024, 2061, 4658, 999, 102, 0, \dots, 0] \\ \footnotesize \text{[CLS]} \  \text{``neural''} \ \text{``networks''}\  \text{``are''} \ \text{``so''} \ \text{``cool''} \ \text{``!''} \ \text{[SEP]}  \end{array}$
 
+\vspace{15px}
 
-%%%%%%%%% PAGE 2.2 : Embeddings %%%%%%%%%
+\textbf{Ex2 : }
 
-\begin{frame}{Vectorisation du texte : Embeddings}
-
-Après la tokenisation, chaque token est converti en un vecteur de nombres réels appelé "embedding". Les embeddings captent les informations sémantiques et syntaxiques des tokens dans un espace vectoriel continu. Les embeddings de BERT sont appris lors de la phase de pré-entraînement du modèle sur de grandes quantités de données textuelles.
-
-\vspace{10px}
-
-\textbf{Exemple}
-
-Phrase d'entrée : "C'est une phrase d'exemple."
-
-Tokens : ["[CLS]", "C", "'", "est", "une", "phrase", "d", "'", "exemple", ".", "[SEP]"]
-
-Embeddings : \[[embedding_C, embedding_apostrophe, embedding_est, embedding_une, embedding_phrase, embedding_d, embedding_apostrophe, embedding_exemple, embedding_point]\]
-
+\ \textit{SENTENCE} : ``Bonjour le monde!''\\
+\ \textit{TOKENS} : $\begin{array}{ll} [101, 14753, 23099, 2099, 3393, 23117, 999, 102, 0, \dots, 0] \\ \footnotesize \text{[CLS]} \  \text{``bon''} \ \text{``\#\#jou''}\  \text{``\#\#r''} \ \text{``le''} \ \text{``monde''} \ \text{``!''} \ \text{[SEP]}  \end{array}$
 
 \end{frame}
 
 
-%%%%%%%%% PAGE 2.3 : Positional Encoding %%%%%%%%%
+%%%%%%%%% PAGE 2.2 : Embeddings + Positional Encoding %%%%%%%%%
+\begin{frame}{Vectorisation du texte : Embeddings \& Positional Encoding}
 
-\begin{frame}{Vectorisation du texte : Positional Encoding}
-    Positional Encoding: Adding positional information to token embeddings.
-    Formula: $\text{Encoding}(\text{pos, 2i) = \sin(pos / (10000^(2i/d_model)))$, $\text{Encoding}(pos, 2i+1) = cos(pos / (10000^(2i/d_model)))$.
-    Example: Calculating positional encoding for each token and embedding dimension.
-    
+
+\begin{center}
+	\resizebox{!}{(\textheight * 4 / 17)}{
+	
+	\begin{minipage}{(\textwidth * 10 / 9)}
+		
+		\setlength{\columnsep}{80pt}
+	
+		\begin{multicols}{2}[]
+		
+		\textbf{Positional Encoding}
+		
+		$$p_k  = (s_0, c_1, \dots, s_{2i}, c_{2i+1}, \dots, s_N)$$
+		 
+		$$s_{2i} = \sin \left( k \cdot 10000^{- \frac{2i}{d_E}} \right)$$
+		
+		$$c_{2i+1} = \cos \left( k \cdot 10000^{- \frac{2i+1}{d_E}} \right)$$
+		
+		\columnbreak
+		
+		\textbf{Token Embedding}
+		
+		$$t_k \longrightarrow \underbrace{(e_{k, 0}, \dots, e_{k, d_E})}_{\text{dimension } d_E}$$
+		
+		\end{multicols}
+	\end{minipage}
+	}
+\end{center}
+
+\begin{center}
+\resizebox{!}{(\textheight * 5 / 18)}{
+\begin{tikzpicture}[
+Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
+]
+
+%Blocks
+
+\node (Sentence) {Sentence};
+\node (Tokens) [right=15px of Sentence] {Tokens};
+\node (TokensT) [below=0px of Tokens] {$T = [t_1, \dots, t_N] \quad$};
+\node (EmptySpace) [right=80px of Tokens] {};
+\node (TokenEmbedding) [above=15px of EmptySpace] {TokenEmbedding};
+\node (EmbeddingE) [above=0px of TokenEmbedding] {$E = [e_1, \dots, e_N]$};
+\node (PositionalEncoding) [below=15px of EmptySpace] {Positional Encoding};
+\node (PositionalP) [below=0px of PositionalEncoding] {$P = [p_1, \dots, p_N]$};
+\node (LayerNorm) [right=80px of EmptySpace] {LayerNormalization $(E + P)$};
+\node (Model) [right=15px of LayerNorm] {Model};
+
+  \node [fit=(Sentence) (Model) (EmbeddingE) (PositionalP), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
+
+%Fleches
+
+\draw[Fleche1] (Sentence.east) to (Tokens.west);
+\draw[Fleche1] (Tokens.east) to (TokenEmbedding.west);
+\draw[Fleche1] (Tokens.east) to (PositionalEncoding.west);
+\draw[Fleche1] (TokenEmbedding.east) to (LayerNorm.west);
+\draw[Fleche1] (PositionalEncoding.east) to (LayerNorm.west);
+\draw[Fleche1] (LayerNorm.east) to (Model.west);
+
+\end{tikzpicture}
+}
+\end{center}
+
 \end{frame}
+
 
 %%%%%%%%% PAGE 3 : Vectorisation du texte %%%%%%%%%
 
@@ -434,6 +486,5 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 \end{frame}
-s
 
 \end{document}

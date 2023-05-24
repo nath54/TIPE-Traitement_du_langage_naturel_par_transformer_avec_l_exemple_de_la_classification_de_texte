@@ -12,3 +12,4 @@ scripts/__pycache__/*
 *.toc
 *.nav
 *.out
+scripts/clientcred.secret
