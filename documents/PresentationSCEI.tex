@@ -305,6 +305,71 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \begin{frame}{Matrice d'attention}
 
 
+\begin{center}
+
+\resizebox{(\textwidth * 11 / 11)}{!}{%
+\begin{tikzpicture}[
+EncBlock/.style = {rectangle, rounded corners, draw=green!30, fill=green!5, thick, dashed, minimum width=150px, minimum height=212px},
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+Ablock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 50px, minimum width = 100px},
+FFblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Circ/.style = {circle, draw=black, thick},
+Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+]
+
+\node (X) {$X$};
+\node (dimX) [below=0px of X] {$(N, d_E)$};
+\node[fit=(X) (dimX), draw=black, thick, rounded corners, inner sep=5px] (boxX) {};
+
+\node (K) [right=100px of X] {$K$};
+\node (dimK) [below=0px of K] {$(N, d_k)$};
+\node[fit=(K) (dimK), draw=black, fill=orange!20!, thick, rounded corners, inner sep=5px] (boxK) {};
+\node (K) [right=100px of X] {$K$};
+\node (dimK) [below=0px of K] {$(N, d_k)$};
+
+\node (Empty1) [above=25px of K] {};
+
+\node (Q) [above=25px of Empty1] {$Q$};
+\node (dimQ) [below=0px of Q] {$(N, d_k)$};
+\node[fit=(Q) (dimQ), draw=black, fill=red!20!, thick, rounded corners, inner sep=5px] (boxQ) {};
+\node (Q) [above=25px of Empty1] {$Q$};
+\node (dimQ) [below=0px of Q] {$(N, d_k)$};
+
+\node (Empty2) [below=25px of K] {};
+
+\node (V) [below=25px of Empty2] {$V$};
+\node (dimV) [below=0px of V] {$(N, d_k)$};
+\node[fit=(V) (dimV), draw=black, fill=blue!20!, thick, rounded corners, inner sep=5px] (boxV) {};
+\node (V) [below=25px of Empty2] {$V$};
+\node (dimV) [below=0px of V] {$(N, d_k)$};
+
+\node (softmax) [right=75px of Empty1] {$\displaystyle \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )$};
+\node[fit=(softmax), draw=black, fill=yellow!20!, thick, rounded corners, inner sep=10px] (boxS) {};
+\node (softmax) [right=75px of Empty1] {$\displaystyle \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )$};
+
+\node (Empty3) [below=10px of softmax] {};
+
+\node (Y) [below right=5px and 75px of boxS] {$Y$};
+\node (dimY) [below=0px of Y] {$(N, d_E)$};
+\node[fit=(Y) (dimY), draw=black, thick, rounded corners, inner sep=5px] (boxY) {};
+
+\node (form) [below right=85px and -65px of Empty3] {\large$\text{Attention}(Q, K, V) = \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )V$};
+
+  \node [fit=(form), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
+
+
+\draw[Fleche1] (boxX.east) to node[left] {$\cdot W_Q$} (boxQ.west);
+\draw[Fleche1] (boxX.east) to node[above] {$\cdot W_K$} (boxK.west);
+\draw[Fleche1] (boxX.east) to node[left] {$\cdot W_V$} (boxV.west);
+\draw[Fleche1] (boxQ.east) to (boxS.west);
+\draw[Fleche1] (boxK.east) to (boxS.west);
+\draw[Fleche1] (boxS.east) to (boxY.west);
+\draw[Fleche1] (boxV.east) to (boxY.west);
+
+\end{tikzpicture}
+}
+\end{center}
 
 \end{frame}
 
@@ -413,7 +478,6 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 %%%%%%%%% PAGE 7 : Le modèle BERT %%%%%%%%%
 
 \begin{frame}{Le modèle BERT}
-
 
 \end{frame}
 
