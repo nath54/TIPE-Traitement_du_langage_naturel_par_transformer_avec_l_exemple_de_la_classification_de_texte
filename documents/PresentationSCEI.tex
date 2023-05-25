@@ -38,7 +38,6 @@
 \begin{itemize}
   \item Architecture Transformer
   	\begin{itemize}
-  	\setbeamertemplate{itemize item}{$\diamond$}
   		\item Vectorisation du texte
   		\item La partie Encodeur de l'architecture
   		\item Les matrices d'Attention
@@ -47,7 +46,6 @@
   \vspace{7px}
   \item Application personnelle
      \begin{itemize}
-     \setbeamertemplate{itemize item}{$\diamond$}
       		\item Objectif / Rapport à la ville
       		\item Le modèle BERT
       		\item La structure du réseau de neurone utilisée
@@ -479,6 +477,14 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 \begin{frame}{Le modèle BERT}
 
+\begin{itemize}
+	\item Architecture Transformer
+	\item Plusieurs tailles de BERT (base, large, ...)
+	\item BERT base : $12 \times$ blocks encoder $\to 112$M paramètres 
+	\item BooksCorpus (800M words) and English Wikipedia (2,500M words)
+	\item Publié vers fin 2018 par des chercheurs de Google
+\end{itemize}
+
 \end{frame}
 
 
@@ -544,6 +550,32 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{frame}{Annexes}
 
+\begin{multicols*}[2][]
+
+Ce que l'on a vu : 
+
+\begin{itemize}
+	\item Architecture Transformer
+	\begin{itemize}
+		\item Le block d'encodeur
+	\end{itemize}
+	\item Application Personnelle
+\end{itemize}
+
+\columnbreak
+
+Annexes / Ouvertures :
+
+\begin{itemize}
+	\item Extraits du code python
+	\item Détails sur les procédés d'apprentissage
+	\item La fonction de loss
+	\item Comparaison avec le modèle GPT
+	\item Le théorème d'approximation universel
+\end{itemize}
+
+
+\end{multicols*}
 
 \end{frame}
 
