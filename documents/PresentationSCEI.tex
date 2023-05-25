@@ -21,6 +21,9 @@
 \usetikzlibrary{positioning} % Add this line to load the positioning library
 \usetikzlibrary{fit}
 
+\usepackage{listings}
+
+
 \usetheme{metropolis}
 
 \title{Le traitement du langage naturel par transformers illustré par un exemple pour la classification de texte}
@@ -550,33 +553,111 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{frame}{Annexes}
 
-\begin{multicols*}[2][]
+\setlength{\columnsep}{5pt}
+\begin{multicols*}{2}[]
 
-Ce que l'on a vu : 
+\textbf{Ce que l'on a vu :}
 
 \begin{itemize}
 	\item Architecture Transformer
 	\begin{itemize}
 		\item Le block d'encodeur
+		\item Les matrices d'attention
+		\item Les réseaux Feed Forward
 	\end{itemize}
 	\item Application Personnelle
 \end{itemize}
 
 \columnbreak
 
-Annexes / Ouvertures :
+\textbf{Annexes / Ouvertures :}
 
 \begin{itemize}
-	\item Extraits du code python
-	\item Détails sur les procédés d'apprentissage
+	\item Détails du code python
+	\item L'algorithme de backpropagation
 	\item La fonction de loss
 	\item Comparaison avec le modèle GPT
 	\item Le théorème d'approximation universel
+	\item Bibliographie
 \end{itemize}
 
 
 \end{multicols*}
 
 \end{frame}
+
+
+
+%%%%%%%%% PAGE 12 : Annexe - Python %%%%%%%%%
+
+\begin{frame}{Annexes: Code python}
+
+
+\begin{lstlisting}[language=python]
+import torch
+import torch.nn as nn
+
+class Net(nn):
+	def \_\_init\_\_(self, dim\_in, dim\_out):
+		super().\_\_init\_\_(self)
+		\#
+		self.layer = nn.Linear(dim\_in, dim\_out)
+		
+	def forward(self, x):
+		return self.layer(x)
+\end{lstlisting}
+
+\end{frame}
+
+
+
+%%%%%%%%% PAGE 13 : Annexe - L'algorithme de backpropagation %%%%%%%%%
+
+\begin{frame}{Annexes: L'algorithme de backpropagation}
+
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%% PAGE 14 : Annexe - Fonction de loss %%%%%%%%%
+
+\begin{frame}{Annexes: Fonction de loss}
+
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%% PAGE 15 : Annexe - Comparaison avec le modème GPT %%%%%%%%%
+
+\begin{frame}{Annexes: Comparaison avec le modèle GPT}
+
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%% PAGE 16 : Annexe - Le théorème d'approximation universel %%%%%%%%%
+
+\begin{frame}{Annexes: Le théorème d'approximation universel}
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+
 
 \end{document}
