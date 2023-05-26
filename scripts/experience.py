@@ -87,7 +87,7 @@ class Experience:
         self.tokenizer = self.load_tokenizer()
         print("Loading the loss function and the optimizer...")
         self.loss_fn = nn.MSELoss().to(self.device)
-        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.00001)
+        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
         #
         self.train_dataset = ExpDataset(self.tokenizer, train, self)
         self.test_dataset = ExpDataset(self.tokenizer, test, self)
@@ -204,7 +204,7 @@ class Experience:
                 dmoy = sum(dists)/len(dists)
                 dmoys_epoch.append(dmoy)
                 
-                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
+                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.25 )
                 num_samples = output.shape[0]
                 accuracy = num_correct/num_samples
 

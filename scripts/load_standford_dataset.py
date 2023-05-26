@@ -68,6 +68,7 @@ def main_sdf_dataset_load():
     #print("Loading dataset...")
     sentences = load_sentences()
     train, test = split_dataset(sentences)
+    print("TRAIN LENGTH : ", len(train), "\nTEST LENGTH : ", len(test))
     labels = load_labels(sentences)
     #
     X_train = []

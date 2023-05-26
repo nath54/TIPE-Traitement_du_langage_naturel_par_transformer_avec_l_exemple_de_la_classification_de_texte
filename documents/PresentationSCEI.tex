@@ -22,7 +22,9 @@
 \usetikzlibrary{fit}
 
 \usepackage{listings}
+\usepackage{tcolorbox}
 
+\usepackage{comment}
 
 \usetheme{metropolis}
 
@@ -473,6 +475,20 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 \begin{frame}{Application Personnelle: Objectifs \& Rapport à la ville}
 
+
+\begin{itemize}
+	\item \textbf{Objectif :}
+	\begin{itemize}
+		\item Classification de texte
+		\item Sentiment : Négatif $\longleftrightarrow$ Positif
+	\end{itemize}
+	\item \textbf{Rapport à la ville :}
+	\begin{itemize}
+		\item Analyser les sentiments des habitants sur différents sujets
+	\end{itemize}
+\end{itemize}
+
+
 \end{frame}
 
 
@@ -535,6 +551,13 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{frame}{Les données et l'apprentissage}
 
+\begin{itemize}
+	\item \textbf{Données : } Standford Sentiment Dataset
+	\item Train : 8544, Test : 2210
+	\item \textbf{Temps d'entraînement : } $\approx$ 15min
+	\item \textbf{Algorithme d'apprentissage : } Adam optimizer (extension de la descente de gradient stochastique)
+	\item \textbf{Fonction de Loss : } MinSquaredError
+\end{itemize}
 
 \end{frame}
 
@@ -545,6 +568,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \begin{frame}{Les résultats}
 
 
+
 \end{frame}
 
 
@@ -553,7 +577,13 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{frame}{Annexes}
 
-\setlength{\columnsep}{5pt}
+
+\begin{center}
+	\resizebox{(\textwidth * 9 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	
+	\begin{minipage}{(\textwidth * 21  / 20)}
+		
+\setlength{\columnsep}{1pt}
 \begin{multicols*}{2}[]
 
 \textbf{Ce que l'on a vu :}
@@ -574,15 +604,21 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \begin{itemize}
 	\item Détails du code python
-	\item L'algorithme de backpropagation
+	\item Adam optimizer
 	\item La fonction de loss
+	\item La Normalisation par couche (LayerNorm)
+	\item La partie décodeur
 	\item Comparaison avec le modèle GPT
 	\item Le théorème d'approximation universel
 	\item Bibliographie
 \end{itemize}
 
-
 \end{multicols*}
+	\end{minipage}
+	}
+\end{center}
+
+
 
 \end{frame}
 
@@ -590,30 +626,31 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 %%%%%%%%% PAGE 12 : Annexe - Python %%%%%%%%%
 
-\begin{frame}{Annexes: Code python}
-
-
+\begin{frame}[fragile]{Annexes: Code python}
+\footnotesize
+\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
+    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
 \begin{lstlisting}[language=python]
-import torch
 import torch.nn as nn
 
-class Net(nn):
-	def \_\_init\_\_(self, dim\_in, dim\_out):
-		super().\_\_init\_\_(self)
-		\#
-		self.layer = nn.Linear(dim\_in, dim\_out)
-		
-	def forward(self, x):
-		return self.layer(x)
-\end{lstlisting}
+class Net(nn.Module):  
+    def __init__(self, dim_in, dim_out):
+        super().__init__()
+        #
+        self.layer = nn.Linear(dim_in, dim_out)
 
+    def forward(self, x):
+        return self.layer(x)
+\end{lstlisting}
+\end{tcolorbox}
+\normalsize
 \end{frame}
 
 
 
 %%%%%%%%% PAGE 13 : Annexe - L'algorithme de backpropagation %%%%%%%%%
 
-\begin{frame}{Annexes: L'algorithme de backpropagation}
+\begin{frame}{Annexes: Adam Optimizer}
 
 
 
