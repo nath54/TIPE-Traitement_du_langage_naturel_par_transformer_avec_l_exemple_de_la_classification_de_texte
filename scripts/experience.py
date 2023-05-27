@@ -277,23 +277,3 @@ class Experience:
             tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch_test), epoch)
 
 
-            # Update optimizer learning rate if needed
-
-            if last_opt_cg >= 10:
-                mll = sum(losses_epoch[-5:])/5
-                dlm = [abs(mll-losses_epoch[-i]) for i in range(1, 6)]
-                dlm_moy = sum(dlm)/5
-                if dlm_moy < 0.001:
-                    for g in self.optimizer.param_groups:
-                        g['lr'] = g['lr']/2.0
-                    # 
-                    print("\n\nLearning rate changed to "+str(self.optimizer.param_groups[0]['lr'])+" !!!")
-
-                else:
-                    last_opt_cg += 1
-            else:
-                last_opt_cg += 1
-
-
-
-

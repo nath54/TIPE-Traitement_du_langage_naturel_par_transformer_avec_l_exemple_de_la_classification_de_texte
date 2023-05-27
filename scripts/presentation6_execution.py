@@ -7,48 +7,14 @@ from experience import Experience
 from tqdm import tqdm
 import json
 
-import gensim.downloader as api
-from gensim.models import Word2Vec
-
 import numpy as np
 import torch
 
 torch.set_grad_enabled(False)
 
-print("Loading Word2Vec model...")
-model = api.load('word2vec-google-news-300')
-
-
-themes = {
-    "city": [],
-    "cars": [],
-    "house": [],
-    "plants": [],
-    "stores": [],
-    "police": [],
-    "hospitals": []
-}
-
-print("Calculating the themes vocabulary...")
-
-for t in tqdm(themes):
-    themes[t] = [s[0] for s in model.most_similar(t, topn=40)]
-
-print("Themes : ", themes)
-
-common_words = {}
-
-for t in themes:
-    common_words[t] = []
-    for word in themes[t]:
-        for t2 in themes:
-            if t != t2:
-                for word2 in themes[t2]:
-                    if word == word2:
-                        common_words[t].append(word)
-
-
-print("\n\nCommon words : ", common_words)
+f = open("final_results.json", "r")
+themes = json.load(f)
+f.close()
 
 print("Loading the dataset file...")
 
@@ -60,7 +26,7 @@ msgs = [json.loads(l)["content"] for l in lines]
 
 themes_msgs = {}
 for t in themes:
-    themes_msgs[t] = []
+    themes_msgs[t] = set()
 
 print("Finding themes in the messages...")
 
@@ -72,7 +38,7 @@ for m in tqdm(msgs):
                 in_ = True
                 break
         if in_ : 
-            themes_msgs[t].append(m)
+            themes_msgs[t].add(m)
 
 sentiments = {}
 
@@ -81,8 +47,9 @@ themes_scores = {}
 
 print("Loading my BERT custom classifier model...")
 classifier = ClassifierFF()
-experience_model = Experience("standford_experience_model3", classifier, "use")
+experience_model = Experience("standford_experience_model4", classifier, "use")
 
+all_diff_results = set()
 
 print("Calculating the sentiment of each messages with the themes...")
 for t in themes:
@@ -93,6 +60,8 @@ for t in themes:
         else:
             tensor = experience_model.use_model(m)
             score = tensor.item()
+            
+            all_diff_results.add(score)
             
             # clear CUDA memory
             del tensor

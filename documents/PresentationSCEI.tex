@@ -36,7 +36,7 @@
 
 \maketitle
 
-%%%%%%%%% SOMMAIRE %%%%%%%%%
+%%%%%%%%% PAGE 1 : SOMMAIRE %%%%%%%%%
 
 \begin{frame}{Sommaire}
 
@@ -63,7 +63,7 @@
 
 \end{frame}
 
-%%%%%%%%% PAGE 1 : L'architecture Transformer %%%%%%%%%
+%%%%%%%%% PAGE 2 : L'architecture Transformer %%%%%%%%%
 
 \begin{frame}{L'architecture Transformer}
 Schéma de l'architecture dans le cas de la génération :
@@ -146,7 +146,7 @@ scale=2
 \end{frame}
 
 
-%%%%%%%%% PAGE 2.1 : Tokenisation & Embeddings %%%%%%%%%
+%%%%%%%%% PAGE 3 : Tokenisation & Embeddings %%%%%%%%%
 
 \begin{frame}{Vectorisation du texte : Tokenisation du texte}
 
@@ -167,7 +167,7 @@ scale=2
 \end{frame}
 
 
-%%%%%%%%% PAGE 2.2 : Embeddings + Positional Encoding %%%%%%%%%
+%%%%%%%%% PAGE 4 : Embeddings + Positional Encoding %%%%%%%%%
 \begin{frame}{Vectorisation du texte : Embeddings \& Positional Encoding}
 
 
@@ -234,7 +234,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
 \end{frame}
 
 
-%%%%%%%%% PAGE 3 : Vectorisation du texte %%%%%%%%%
+%%%%%%%%% PAGE 5 : Vectorisation du texte %%%%%%%%%
 
 \begin{frame}{La partie Encodeur}
 
@@ -303,7 +303,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \end{center}
 \end{frame}
 
-%%%%%%%%% PAGE 4 : Matrices d'attention %%%%%%%%%
+%%%%%%%%% PAGE 6 : Matrices d'attention %%%%%%%%%
 
 \begin{frame}{Matrice d'attention}
 
@@ -376,7 +376,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 \end{frame}
 
-%%%%%%%%% PAGE 5 : Le réseau Feed Forward %%%%%%%%%
+%%%%%%%%% PAGE 7 : Le réseau Feed Forward %%%%%%%%%
 
 \begin{frame}{Le réseau Feed Forward}
 
@@ -471,7 +471,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 \end{frame}
 
 
-%%%%%%%%% PAGE 6 : Le réseau Feed Forward %%%%%%%%%
+%%%%%%%%% PAGE 8 : Le réseau Feed Forward %%%%%%%%%
 
 \begin{frame}{Application Personnelle: Objectifs \& Rapport à la ville}
 
@@ -492,7 +492,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 \end{frame}
 
 
-%%%%%%%%% PAGE 7 : Le modèle BERT %%%%%%%%%
+%%%%%%%%% PAGE 9 : Le modèle BERT %%%%%%%%%
 
 \begin{frame}{Le modèle BERT}
 
@@ -507,7 +507,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 \end{frame}
 
 
-%%%%%%%%% PAGE 8 : La structure du réseau de neurone utilisée %%%%%%%%%
+%%%%%%%%% PAGE 10 : La structure du réseau de neurone utilisée %%%%%%%%%
 
 \begin{frame}{La structure du réseau de neurone utilisée}
 
@@ -547,7 +547,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \end{frame}
 
 
-%%%%%%%%% PAGE 9 : Les données et l'apprentissage %%%%%%%%%
+%%%%%%%%% PAGE 11 : Les données et l'apprentissage %%%%%%%%%
 
 \begin{frame}{Les données et l'apprentissage}
 
@@ -563,7 +563,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 
-%%%%%%%%% PAGE 10 : Les résultats %%%%%%%%%
+%%%%%%%%% PAGE 12 : Les résultats %%%%%%%%%
 
 \begin{frame}{Les résultats}
 
@@ -582,7 +582,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 
-%%%%%%%%% PAGE 11 : Annexes %%%%%%%%%
+%%%%%%%%% PAGE 13 : Annexes %%%%%%%%%
 
 \begin{frame}{Annexes}
 
@@ -633,7 +633,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 
-%%%%%%%%% PAGE 12 : Annexe - Python %%%%%%%%%
+%%%%%%%%% PAGE 14 : Annexe - Python %%%%%%%%%
 
 \begin{frame}[fragile]{Annexes: Code python}
 \footnotesize
@@ -657,7 +657,7 @@ class Net(nn.Module):
 
 
 
-%%%%%%%%% PAGE 13 : Annexe - L'algorithme de backpropagation %%%%%%%%%
+%%%%%%%%% PAGE 15 : Annexe - L'algorithme de backpropagation %%%%%%%%%
 
 \begin{frame}{Annexes: Adam Optimizer}
 
@@ -668,7 +668,7 @@ class Net(nn.Module):
 
 
 
-%%%%%%%%% PAGE 14 : Annexe - Fonction de loss %%%%%%%%%
+%%%%%%%%% PAGE 16 : Annexe - Fonction de loss %%%%%%%%%
 
 \begin{frame}{Annexes: Fonction de loss}
 
@@ -679,7 +679,28 @@ class Net(nn.Module):
 
 
 
-%%%%%%%%% PAGE 15 : Annexe - Comparaison avec le modème GPT %%%%%%%%%
+%%%%%%%%% PAGE 17 : Annexe - LayerNormalization %%%%%%%%%
+
+\begin{frame}{Annexes: LayerNormalization}
+
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%% PAGE 18 : Annexe - Partie décodeur de l'architecture transformer %%%%%%%%%
+
+\begin{frame}{Annexes: Partie décodeur de l'architecture transformer}
+
+
+
+\end{frame}
+
+
+
+%%%%%%%%% PAGE 19 : Annexe - Comparaison avec le modème GPT %%%%%%%%%
 
 \begin{frame}{Annexes: Comparaison avec le modèle GPT}
 
@@ -690,15 +711,34 @@ class Net(nn.Module):
 
 
 
-%%%%%%%%% PAGE 16 : Annexe - Le théorème d'approximation universel %%%%%%%%%
+
+%%%%%%%%% PAGE 20 : Annexe - Le théorème d'approximation universel %%%%%%%%%
 
 \begin{frame}{Annexes: Le théorème d'approximation universel}
+
+\textbf{Enoncé :}
+Les transformateurs sont des approximateurs universels des fonctions continues de séquence à séquence sur un domaine compact.
+
+\textbf{Preuve :}
 
 
 
 \end{frame}
 
 
+
+
+%%%%%%%%% PAGE 21 : Annexe - Bibliographie %%%%%%%%%
+
+\begin{frame}{Annexes: Bibliographie}
+
+\begin{itemize}
+	\item Les différents papiers 
+	\item ``ARE TRANSFORMERS UNIVERSAL APPROXIMATORS
+OF SEQUENCE-TO-SEQUENCE FUNCTIONS?'', Google Research 2020
+\end{itemize}
+
+\end{frame}
 
 
 
