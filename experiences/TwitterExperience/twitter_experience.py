@@ -57,7 +57,7 @@ if __name__ == "__main__":
     train, test  = main_twt_dataset_load()
     print(f"Train : {len(train[0])}, Test : {len(test[0])}")
 
-    experience = Experience("twitter_experience_model2", train, test, classifier_model)
+    experience = Experience("twitter_experience_model2", classifier_model, "train", train, test)
 
     experience.train_model(150)
 

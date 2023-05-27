@@ -73,7 +73,7 @@ class FullModelBertClassifier(nn.Module):
 """ Objet experience """
 
 class Experience:
-    def __init__(self, model_name, train, test, classifier_model):
+    def __init__(self, model_name, classifier_model, mode="use", train=None, test=None): #modes : "use" and "train"
         #
         self.root_dir = "C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/"
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -85,17 +85,19 @@ class Experience:
         self.model = FullModelBertClassifier(classifier_model).to(self.device)
         print("Loading the tokenizer...")
         self.tokenizer = self.load_tokenizer()
-        print("Loading the loss function and the optimizer...")
-        self.loss_fn = nn.MSELoss().to(self.device)
-        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
         #
-        self.train_dataset = ExpDataset(self.tokenizer, train, self)
-        self.test_dataset = ExpDataset(self.tokenizer, test, self)
-        #
+        if mode == "train":
+            print("Loading the loss function and the optimizer...")
+            self.loss_fn = nn.MSELoss().to(self.device)
+            self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
+            #
+            self.train_dataset = ExpDataset(self.tokenizer, train, self)
+            self.test_dataset = ExpDataset(self.tokenizer, test, self)
+            #
 
-        #
-        for param in self.model.bert_model.parameters():
-            param.requires_grad = False # On n'entrainera pas les paramètres de BERT
+            #
+            for param in self.model.bert_model.parameters():
+                param.requires_grad = False # On n'entrainera pas les paramètres de BERT
         #
         pth = self.root_dir + "torch_saves/"+model_name+"_state.pt"
         if os.path.exists(pth):

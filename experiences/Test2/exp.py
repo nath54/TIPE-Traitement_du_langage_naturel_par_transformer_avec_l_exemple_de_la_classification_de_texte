@@ -39,7 +39,7 @@ if __name__ == "__main__":
     train, test  = main_sdf_dataset_load()
     print(f"Train : {len(train[0])}, Test : {len(test[0])}")
 
-    experience = Experience("test1", train, test, classifier_model)
+    experience = Experience("test1", classifier_model, "train", train, test)
 
     experience.train_model(100)
 
