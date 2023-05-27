@@ -19,7 +19,7 @@ class ClassifierFF(nn.Module):
         # Non-linearity
         self.nl1 = nn.Softmax()
         # Linear function (readout)
-        self.lin5 = nn.Linear(384, 1)  
+        self.lin5 = nn.Linear(384, 1)
         #
         self.lst = [self.lin1, self.lin2, self.lin3, self.lin4, self.nl1, self.lin5]
     
@@ -29,23 +29,23 @@ class ClassifierFF(nn.Module):
         return x
     
 
-class ClassifierFF(nn.Module):
-    def __init__(self): # 768 -> 1
-        super(ClassifierFF, self).__init__()
-        #
-        # Linear function
-        self.lin1 = nn.Linear(768, 7680)
-#         # Non-linearity
-        self.nl1 = nn.Softmax()
-        # Linear function (readout)
-        self.lin2 = nn.Linear(7680, 1)  
-        #
-        self.lst = [self.lin1, self.nl1, self.lin2]
+# class ClassifierFF(nn.Module):
+#     def __init__(self): # 768 -> 1
+#         super(ClassifierFF, self).__init__()
+#         #
+#         # Linear function
+#         self.lin1 = nn.Linear(768, 7680)
+# #         # Non-linearity
+#         self.nl1 = nn.Softmax()
+#         # Linear function (readout)
+#         self.lin2 = nn.Linear(7680, 1)  
+#         #
+#         self.lst = [self.lin1, self.nl1, self.lin2]
     
-    def forward(self, x):
-        for f in self.lst:
-            x = f(x)
-        return x
+#     def forward(self, x):
+#         for f in self.lst:
+#             x = f(x)
+#         return x
 
 
 
