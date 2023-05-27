@@ -86,10 +86,11 @@ class Experience:
         print("Loading the tokenizer...")
         self.tokenizer = self.load_tokenizer()
         #
+        if mode == "train": print("Loading the loss function and the optimizer...")
+        self.loss_fn = nn.MSELoss().to(self.device)
+        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
+        #
         if mode == "train":
-            print("Loading the loss function and the optimizer...")
-            self.loss_fn = nn.MSELoss().to(self.device)
-            self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
             #
             self.train_dataset = ExpDataset(self.tokenizer, train, self)
             self.test_dataset = ExpDataset(self.tokenizer, test, self)
