@@ -35,12 +35,14 @@ class ClassifierFF(nn.Module):
         #
         # Linear function
         self.lin1 = nn.Linear(768, 7680*2)
-#         # Non-linearity
+        # Non-linearity
         self.nl1 = nn.Softmax()
         # Linear function (readout)
-        self.lin2 = nn.Linear(7680*2, 1)  
+        self.lin2 = nn.Linear(7680*2, 2)
+        # Probabilities
+        self.nl2 = nn.Sigmoid() 
         #
-        self.lst = [self.lin1, self.nl1, self.lin2]
+        self.lst = [self.lin1, self.nl1, self.lin2, self.nl2]
     
     def forward(self, x):
         for f in self.lst:
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     train, test  = main_twt_dataset_load()
     print(f"Train : {len(train[0])}, Test : {len(test[0])}")
 
-    experience = Experience("twitter_experience_model2", classifier_model, "train", train, test)
+    experience = Experience("twitter_experience_model3", classifier_model, 2, "train", train, test)
 
     experience.train_model(150)
 

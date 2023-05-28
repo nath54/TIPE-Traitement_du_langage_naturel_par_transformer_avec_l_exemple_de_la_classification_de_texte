@@ -1,4 +1,5 @@
 import random
+import torch
 
 def load_sentences(path):
     f = open(path, "r")
@@ -6,14 +7,19 @@ def load_sentences(path):
     f.close()
     return sentences
 
+def tensor_with_1(n, i):
+    t = torch.zeros(n)
+    t[i] = 1.0
+    return t
+
 def main_twt_dataset_load():
     #print("Loading dataset...")
     train_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_posit.txt")
     train_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_negat.txt")[:len(train_pos)]
     test_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_posit.txt")
     test_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_negat.txt")
-    train = [(t, 1) for t in train_pos] + [(t, 0) for t in train_neg]
-    test = [(t, 1) for t in test_pos] + [(t, 0) for t in test_neg]
+    train = [(t, tensor_with_1(2, 1)) for t in train_pos] + [(t, tensor_with_1(2, 0)) for t in train_neg]
+    test = [(t, tensor_with_1(2, 1)) for t in test_pos] + [(t, tensor_with_1(2, 0)) for t in test_neg]
     random.shuffle(train)
     random.shuffle(test)
     #

@@ -63,9 +63,7 @@ class FullModelBertClassifier(nn.Module):
         self.classifier = classifier_model
         
     def forward(self,ids,mask,token_type_ids):
-        a, out= self.bert_model(ids,attention_mask=mask,token_type_ids=token_type_ids, return_dict=False)
-
-        print(a, out)
+        _, out= self.bert_model(ids,attention_mask=mask,token_type_ids=token_type_ids, return_dict=False)
 
         out = self.classifier(out)
 
@@ -75,7 +73,7 @@ class FullModelBertClassifier(nn.Module):
 """ Objet experience """
 
 class Experience:
-    def __init__(self, model_name, classifier_model, mode="use", train=None, test=None): #modes : "use" and "train"
+    def __init__(self, model_name, classifier_model, nb_classes=1, mode="use", train=None, test=None): #modes : "use" and "train"
         #
         self.root_dir = "C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/"
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -83,16 +81,22 @@ class Experience:
         print("Device : ", self.device)
         #
         self.model_name = model_name
+        self.nb_classes = nb_classes
         print("Loading the model...")
         self.model = FullModelBertClassifier(classifier_model).to(self.device)
         print("Loading the tokenizer...")
         self.tokenizer = self.load_tokenizer()
         #
         if mode == "train": print("Loading the loss function and the optimizer...")
-        self.loss_fn = nn.MSELoss().to(self.device)
+        if nb_classes == 1:
+            self.loss_fn = nn.MSELoss().to(self.device)
+        else:
+            self.loss_fn = nn.BCELoss().to(self.device)
         self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
         #
         if mode == "train":
+            if train == None or test==None:
+                raise UserWarning("Train or test dataset is null!")
             #
             self.train_dataset = ExpDataset(self.tokenizer, train, self)
             self.test_dataset = ExpDataset(self.tokenizer, test, self)
@@ -205,6 +209,7 @@ class Experience:
                 
                 self.optimizer.step()
 
+                
                 dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
                 dmoy = sum(dists)/len(dists)
                 dmoys_epoch.append(dmoy)
@@ -256,17 +261,32 @@ class Experience:
                 loss.backward()
                 losses_epoch_test.append(loss.item())
 
-                dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
-                dmoy = sum(dists)/len(dists)
-                dmoys_epoch_test.append(dmoy)
-                
-                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
-                num_samples = output.shape[0]
-                accuracy = num_correct/num_samples
+                if self.nb_classes == 1:
+                    dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
+                    dmoy = sum(dists)/len(dists)
+                    dmoys_epoch_test.append(dmoy)
+                    
+                    num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
+                    num_samples = output.shape[0]
+                    accuracy = num_correct/num_samples
 
-                accuracy_epoch_test.append(accuracy)
-                
-                print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                    accuracy_epoch_test.append(accuracy)
+                    
+                    print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                else:
+                    dists = [torch.dist(a, b) for a, b in zip(output, label)]
+                    dmoy = sum(dists)/len(dists)
+                    dmoys_epoch_test.append(dmoy)
+
+                    num_correct = sum(1 for a, b in zip(output, label) if torch.argmax(a) == torch.argmax(b) )
+                    num_samples = output.shape[0]
+                    accuracy = num_correct/num_samples
+                    
+                    accuracy_epoch_test.append(accuracy)
+
+                    print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+
+
                 
                 # Show progress while training
                 loop_test.set_description(f'Epoch={epoch}/{epochs}')
