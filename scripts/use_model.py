@@ -14,7 +14,7 @@ torch.set_grad_enabled(False)
 
 print("Loading my BERT custom classifier model...")
 classifier = ClassifierFF()
-experience_model = Experience("standford_experience_model4", classifier, "use")
+experience_model = Experience("standford_experience_model6", classifier, "use")
 
 q = input(">>>")
 while q != "q":

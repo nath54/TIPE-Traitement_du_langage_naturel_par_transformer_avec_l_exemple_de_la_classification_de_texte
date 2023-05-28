@@ -91,8 +91,8 @@ class Experience:
         if nb_classes == 1:
             self.loss_fn = nn.MSELoss().to(self.device)
         else:
-            self.loss_fn = nn.BCELoss().to(self.device)
-        self.optimizer= optim.Adam(self.model.parameters(),lr= 0.001)
+            self.loss_fn = nn.CrossEntropyLoss().to(self.device)
+        self.optimizer= optim.Adam(self.model.parameters(),lr=0.001)
         #
         if mode == "train":
             if train == None or test==None:
@@ -167,12 +167,11 @@ class Experience:
         #
         tb = SummaryWriter()
         #
-        data_sampler = RandomSampler(self.train_dataset, num_samples=100)
-        dataloader = DataLoader(self.train_dataset, 16, sampler=data_sampler)
-        test_sampler = RandomSampler(self.test_dataset, num_samples=50)
-        testloader = DataLoader(self.test_dataset, 16, sampler=test_sampler)
-        #
-        last_opt_cg = 0
+        #data_sampler = RandomSampler(self.train_dataset, num_samples=100)
+        dataloader = DataLoader(self.train_dataset, 16, shuffle=True)
+        print(dataloader.dataset)
+        #test_sampler = RandomSampler(self.test_dataset, num_samples=50)
+        testloader = DataLoader(self.test_dataset, 16)
         #
         print("Preparing the model to train...")
         self.model.to(self.device)
@@ -297,5 +296,6 @@ class Experience:
             tb.add_scalar("Loss Test", sum(losses_epoch_test)/len(losses_epoch_test), epoch)
             tb.add_scalar("Accuracy Test", sum(accuracy_epoch_test)/len(accuracy_epoch_test), epoch)
             tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch_test), epoch)
+
 
 

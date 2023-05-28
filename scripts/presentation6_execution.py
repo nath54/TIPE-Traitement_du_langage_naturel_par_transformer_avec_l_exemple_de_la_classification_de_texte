@@ -47,7 +47,7 @@ themes_scores = {}
 
 print("Loading my BERT custom classifier model...")
 classifier = ClassifierFF()
-experience_model = Experience("standford_experience_model4", classifier, "use")
+experience_model = Experience("standford_experience_model6", classifier, "use")
 
 all_diff_results = set()
 
