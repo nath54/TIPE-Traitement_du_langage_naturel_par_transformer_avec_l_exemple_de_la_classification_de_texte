@@ -63,7 +63,9 @@ class FullModelBertClassifier(nn.Module):
         self.classifier = classifier_model
         
     def forward(self,ids,mask,token_type_ids):
-        _, out= self.bert_model(ids,attention_mask=mask,token_type_ids=token_type_ids, return_dict=False)
+        a, out= self.bert_model(ids,attention_mask=mask,token_type_ids=token_type_ids, return_dict=False)
+
+        print(a, out)
 
         out = self.classifier(out)
 
