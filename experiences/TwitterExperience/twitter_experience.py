@@ -17,7 +17,7 @@ from load_twitter_dataset import *
 #         self.lin3 = nn.Linear(768*15, 768*5)
 #         self.lin4 = nn.Linear(768*5, 384)
 #         # Non-linearity
-#         self.nl1 = nn.Softmax()
+#         self.nl1 = nn.ReLU()
 #         # Linear function (readout)
 #         self.lin5 = nn.Linear(384, 1)  
 #         #
@@ -40,7 +40,7 @@ class ClassifierFF(nn.Module):
         # Linear function (readout)
         self.lin2 = nn.Linear(7680*2, 2)
         #
-        self.lst = [self.lin1, self.nl1, self.lin2, self.nl2]
+        self.lst = [self.lin1, self.nl1, self.lin2]
     
     def forward(self, x):
         for f in self.lst:

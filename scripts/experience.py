@@ -202,6 +202,12 @@ class Experience:
                     token_type_ids=token_type_ids).to(self.device)
                 label = label.type_as(output)
 
+                if label.shape == (16,1,2):
+                    label = label.view(16,2)
+
+                print("Output shape : ", output.shape)
+                print("Label shape : ", label.shape)
+
                 loss = self.loss_fn(output,label)
                 loss.backward()
                 losses_epoch.append(loss.item())
