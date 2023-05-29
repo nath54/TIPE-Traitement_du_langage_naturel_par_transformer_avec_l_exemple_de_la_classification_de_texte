@@ -276,7 +276,8 @@ class Experience:
                 token_type_ids = dl['token_type_ids'].to(self.device)
                 mask = dl['mask'].to(self.device)
                 label = dl['target'].to(self.device)
-                label = label.unsqueeze(1)
+                if self.nb_classes == 1:
+                    label = label.unsqueeze(1)
                 
                 output = self.model(
                     ids=ids,
