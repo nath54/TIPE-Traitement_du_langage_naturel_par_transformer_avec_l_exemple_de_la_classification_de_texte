@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     experience = Experience("standford_experience_model6", classifier_model, 1, "train", train, test)
 
-    experience.train_model(80)
+    experience.train_model(5)
 
     # experience.save_model_state()
 

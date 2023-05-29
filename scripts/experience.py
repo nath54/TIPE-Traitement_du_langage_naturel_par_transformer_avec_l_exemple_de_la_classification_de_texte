@@ -167,11 +167,13 @@ class Experience:
         #
         tb = SummaryWriter()
         #
+        batch_size = 8
+        #
         #data_sampler = RandomSampler(self.train_dataset, num_samples=100)
-        dataloader = DataLoader(self.train_dataset, 16, shuffle=True)
+        dataloader = DataLoader(self.train_dataset, batch_size, shuffle=True)
         print(dataloader.dataset)
         #test_sampler = RandomSampler(self.test_dataset, num_samples=50)
-        testloader = DataLoader(self.test_dataset, 16)
+        testloader = DataLoader(self.test_dataset, batch_size)
         #
         print("Preparing the model to train...")
         self.model.to(self.device)
@@ -202,8 +204,8 @@ class Experience:
                     token_type_ids=token_type_ids).to(self.device)
                 label = label.type_as(output)
 
-                if label.shape == (16,1,2):
-                    label = label.view(16,2)
+                if label.shape == (batch_size,1,2):
+                    label = label.view(batch_size,2)
                 
                 loss = self.loss_fn(output,label)
                 loss.backward()
@@ -222,11 +224,11 @@ class Experience:
 
                 accuracy_epoch.append(accuracy)
                 
-                print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                # print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
                 
                 # Show progress while training
                 loop.set_description(f'Epoch={epoch}/{epochs}')
-                loop.set_postfix(loss=loss.item(),acc=accuracy)
+                loop.set_postfix(loss=loss.item(),acc=accuracy, dist_moy=dmoy)
 
             
             tb.add_scalar("Loss", sum(losses_epoch)/len(losses_epoch), epoch)
@@ -274,7 +276,7 @@ class Experience:
 
                     accuracy_epoch_test.append(accuracy)
                     
-                    print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                    #print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
                 else:
                     dists = [torch.dist(a, b) for a, b in zip(output, label)]
                     dmoy = sum(dists)/len(dists)
@@ -286,13 +288,13 @@ class Experience:
                     
                     accuracy_epoch_test.append(accuracy)
 
-                    print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                    #print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
 
 
                 
                 # Show progress while training
                 loop_test.set_description(f'Epoch={epoch}/{epochs}')
-                loop_test.set_postfix(loss=loss.item(),acc=accuracy)
+                loop_test.set_postfix(loss=loss.item(),acc=accuracy, dmoy=dmoy)
 
 
             

@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     experience = Experience("twitter_experience_model3", classifier_model, 2, "train", train, test)
 
-    experience.train_model(150)
+    experience.train_model(5)
 
     # experience.save_model_state()
 
