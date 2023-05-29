@@ -261,6 +261,9 @@ class Experience:
                     token_type_ids=token_type_ids)
                 label = label.type_as(output)
 
+                if label.shape == (batch_size,1,2):
+                    label = label.view(batch_size,2)
+
                 loss = self.loss_fn(output,label)
                 loss.backward()
                 losses_epoch_test.append(loss.item())
