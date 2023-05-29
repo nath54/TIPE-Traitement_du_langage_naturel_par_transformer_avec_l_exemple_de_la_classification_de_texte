@@ -44,11 +44,14 @@ class ExpDataset(Dataset):
         token_type_ids = inputs["token_type_ids"]
         mask = inputs["attention_mask"]
 
+        if label is not Tensor:
+            label = torch.tensor(label, dtype=torch.float32)
+
         return {
             'ids': torch.tensor(ids, dtype=torch.long),
             'mask': torch.tensor(mask, dtype=torch.long),
             'token_type_ids': torch.tensor(token_type_ids, dtype=torch.long),
-            'target': torch.tensor(label, dtype=torch.float32)
+            'target': label
         }
 
 
@@ -167,11 +170,10 @@ class Experience:
         #
         tb = SummaryWriter()
         #
-        batch_size = 8
+        batch_size = 16
         #
         #data_sampler = RandomSampler(self.train_dataset, num_samples=100)
         dataloader = DataLoader(self.train_dataset, batch_size, shuffle=True)
-        print(dataloader.dataset)
         #test_sampler = RandomSampler(self.test_dataset, num_samples=50)
         testloader = DataLoader(self.test_dataset, batch_size)
         #
@@ -194,7 +196,9 @@ class Experience:
                 token_type_ids = dl['token_type_ids'].to(self.device)
                 mask = dl['mask'].to(self.device)
                 label = dl['target'].to(self.device)
-                label = label.unsqueeze(1)
+
+                if self.nb_classes == 1:
+                    label = label.unsqueeze(1)
 
                 self.optimizer.zero_grad()
                 
@@ -213,22 +217,38 @@ class Experience:
                 
                 self.optimizer.step()
 
-                
-                dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
-                dmoy = sum(dists)/len(dists)
-                dmoys_epoch.append(dmoy)
-                
-                num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.25 )
-                num_samples = output.shape[0]
-                accuracy = num_correct/num_samples
+                if self.nb_classes == 1:
+                    dists = [abs(a[0]-b[0]) for a, b in zip(output, label)]
+                    dmoy = sum(dists)/len(dists)
+                    dmoys_epoch_test.append(dmoy)
+                    
+                    num_correct = sum(1 for a, b in zip(output, label) if abs(a[0]-b[0]) <= 0.1 )
+                    num_samples = output.shape[0]
+                    accuracy = num_correct/num_samples
 
-                accuracy_epoch.append(accuracy)
+                    accuracy_epoch.append(accuracy)
+
+                    
+                    # Show progress while training
+                    loop.set_description(f'Epoch={epoch}/{epochs}')
+                    loop.set_postfix(loss=loss.item(),acc=accuracy, dist_moy=dmoy)
+                    
+                    #print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
+                else:
+                    num_correct = sum(1 for a, b in zip(output, label) if torch.argmax(a) == torch.argmax(b) )
+                    num_samples = output.shape[0]
+                    accuracy = num_correct/num_samples
+                    
+                    accuracy_epoch.append(accuracy)
+
+                        
+                    # Show progress while training
+                    loop.set_description(f'Epoch={epoch}/{epochs}')
+                    loop.set_postfix(loss=loss.item(),acc=accuracy)
+
                 
                 # print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
                 
-                # Show progress while training
-                loop.set_description(f'Epoch={epoch}/{epochs}')
-                loop.set_postfix(loss=loss.item(),acc=accuracy, dist_moy=dmoy)
 
             
             tb.add_scalar("Loss", sum(losses_epoch)/len(losses_epoch), epoch)
@@ -261,9 +281,6 @@ class Experience:
                     token_type_ids=token_type_ids)
                 label = label.type_as(output)
 
-                if label.shape == (batch_size,1,2):
-                    label = label.view(batch_size,2)
-
                 loss = self.loss_fn(output,label)
                 loss.backward()
                 losses_epoch_test.append(loss.item())
@@ -278,13 +295,14 @@ class Experience:
                     accuracy = num_correct/num_samples
 
                     accuracy_epoch_test.append(accuracy)
+
+                    
+                    # Show progress while training
+                    loop_test.set_description(f'Epoch={epoch}/{epochs}')
+                    loop_test.set_postfix(loss=loss.item(),acc=accuracy, dmoy=dmoy)
                     
                     #print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
                 else:
-                    dists = [torch.dist(a, b) for a, b in zip(output, label)]
-                    dmoy = sum(dists)/len(dists)
-                    dmoys_epoch_test.append(dmoy)
-
                     num_correct = sum(1 for a, b in zip(output, label) if torch.argmax(a) == torch.argmax(b) )
                     num_samples = output.shape[0]
                     accuracy = num_correct/num_samples
@@ -293,17 +311,19 @@ class Experience:
 
                     #print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}, (dist moy = {dmoy})')
 
+                    
+                    # Show progress while training
+                    loop_test.set_description(f'Epoch={epoch}/{epochs}')
+                    loop_test.set_postfix(loss=loss.item(),acc=accuracy)
 
                 
-                # Show progress while training
-                loop_test.set_description(f'Epoch={epoch}/{epochs}')
-                loop_test.set_postfix(loss=loss.item(),acc=accuracy, dmoy=dmoy)
 
 
             
             tb.add_scalar("Loss Test", sum(losses_epoch_test)/len(losses_epoch_test), epoch)
             tb.add_scalar("Accuracy Test", sum(accuracy_epoch_test)/len(accuracy_epoch_test), epoch)
-            tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch_test), epoch)
+            if self.nb_classes == 1:
+                tb.add_scalar("Distance Moy Test", sum(dmoys_epoch_test)/len(dmoys_epoch_test), epoch)
 
 
 
