@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import transformers
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.utils.data import RandomSampler
@@ -170,7 +171,7 @@ class Experience:
         #
         tb = SummaryWriter()
         #
-        batch_size = 16
+        batch_size = 8
         #
         #data_sampler = RandomSampler(self.train_dataset, num_samples=100)
         dataloader = DataLoader(self.train_dataset, batch_size, shuffle=True)
@@ -253,7 +254,9 @@ class Experience:
             
             tb.add_scalar("Loss", sum(losses_epoch)/len(losses_epoch), epoch)
             tb.add_scalar("Accuracy", sum(accuracy_epoch)/len(accuracy_epoch), epoch)
-            tb.add_scalar("Distance Moy", sum(dmoys_epoch)/len(dmoys_epoch), epoch)
+            
+            if self.nb_classes == 1:
+                tb.add_scalar("Distance Moy", sum(dmoys_epoch)/len(dmoys_epoch), epoch)
 
             # for name, weight in self.model.classifier.named_parameters():
             #     tb.add_histogram(name,weight, epoch)

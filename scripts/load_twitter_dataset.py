@@ -18,8 +18,8 @@ def main_twt_dataset_load():
     train_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_posit.txt")
     train_pos = train_pos[:min(len(train_pos), N)]
     train_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_negat.txt")[:len(train_pos)]
-    test_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_posit.txt")[:N/2]
-    test_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_negat.txt")[:N/2]
+    test_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_posit.txt")[:N//2]
+    test_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/teste_negat.txt")[:N//2]
     train = [(t, tensor_with_1(2, 1)) for t in train_pos] + [(t, tensor_with_1(2, 0)) for t in train_neg]
     test = [(t, tensor_with_1(2, 1)) for t in test_pos] + [(t, tensor_with_1(2, 0)) for t in test_neg]
     random.shuffle(train)
