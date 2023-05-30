@@ -552,11 +552,11 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \begin{frame}{Les données et l'apprentissage}
 
 \begin{itemize}
-	\item \textbf{Données : } Standford Sentiment Dataset
-	\item Train : 8544, Test : 2210
-	\item \textbf{Temps d'entraînement : } $\approx$ 15min
+	\item \textbf{Données : } Twitter 1.6 billions sentiment
+	\item Train : 50000, Test : 25000
+	\item \textbf{Temps d'entraînement : } $\approx$ 5h
 	\item \textbf{Algorithme d'apprentissage : } Adam optimizer (extension de la descente de gradient stochastique)
-	\item \textbf{Fonction de Loss : } MinSquaredError
+	\item \textbf{Fonction de Loss : } CrossEntropy
 \end{itemize}
 
 \end{frame}
@@ -570,9 +570,6 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \begin{center}
 \resizebox{(\textwidth * 11 / 11)}{!}{
 \begin{tikzpicture}
-
-\node (LossTest) {\includegraphics{loss_test.png}};
-\node (LossTrain) [right= of LossTest] {\includegraphics{loss_train.png}};
 
 \end{tikzpicture}
 }
@@ -672,7 +669,16 @@ class Net(nn.Module):
 
 \begin{frame}{Annexes: Fonction de loss}
 
+Fonction Cross Entropy
 
+Soit $C_1, \dots, C_N$  $N$ classes . Soit $x = (x_1, \dots, x_N)$ la sortie du modèle.
+Soit $v$ l'indice de la vraie classe.
+
+pour chaque $i \in [\![1, n]\!]$, $E_i = - \log \left ( \frac{e^{x_v}}{\sum_{k=1}^N e^{x_k} \right )$
+
+Donc au final $CE(x, v) = \frac{1}{N} \sum_{i=1}^N E_i$ 
+
+$$$$
 
 \end{frame}
 

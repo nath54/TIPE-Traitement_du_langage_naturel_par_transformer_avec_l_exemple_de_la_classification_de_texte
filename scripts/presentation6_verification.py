@@ -9,7 +9,7 @@ import torch
 
 torch.set_grad_enabled(False)
 
-f = open("final_results.json", "r")
+f = open("themes.json", "r")
 themes = json.load(f)
 f.close()
 
@@ -19,23 +19,39 @@ f = open("D:/datasets/news.json")
 lines = f.readlines()
 f.close()
 
-msgs = [json.loads(l)["content"] for l in lines]
+msgs = [json.loads(l)["content"].lower() for l in lines]
 
 themes_msgs = {}
 for t in themes:
-    themes_msgs[t] = set()
+    themes_msgs[t] = []
 
 print("Finding themes in the messages...")
 
-for m in tqdm(msgs):
-    for t in themes:
-        in_ = False
+used = {}
+
+for t in themes:
+    n = 0
+    for m in tqdm(msgs):
+        dedans = False
         for tt in themes[t]:
-            if tt in m:
-                in_ = True
+            ttt = tt.lower()
+            if ttt in m:
+                if not ttt in used:
+                    used[ttt] = 1
+                else:
+                    used[ttt] += 1
+                #
+                dedans = True
                 break
-        if in_ : 
-            themes_msgs[t].add(m)
+        if dedans : 
+            themes_msgs[t].append(m)
+            n+=1
+
+f = open("debug_used.json", "w")
+json.dump(used, f)
+f.close()
+
+#
 
 sentiments = {}
 
@@ -56,14 +72,14 @@ for t in themes:
             res = sentiments[m]
         else:
             res = analyzer.predict(m).probas
-            res = [(res[itm], itm) for itm in res.keys]
+            res = [(res[itm], itm) for itm in res.keys()]
             res.sort()
             #
             sentiments[m] = res
         #
-        if res[0][1] == "POS": nb_pos+=1
-        elif res[0][1] == "NEU": nb_neu+=1
-        elif res[0][1] == "NEG": nb_neg+=1
+        if res[2][1] == "POS": nb_pos+=1
+        elif res[2][1] == "NEU": nb_neu+=1
+        elif res[2][1] == "NEG": nb_neg+=1
 
     #
     themes_scores[t] = {

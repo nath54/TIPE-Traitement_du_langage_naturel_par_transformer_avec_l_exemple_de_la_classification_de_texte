@@ -1,65 +1,37 @@
 {
     "city": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 2556,
+        "neutral": 385,
+        "negative": 2843
     },
     "cars": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 7162,
+        "neutral": 987,
+        "negative": 4955
     },
     "house": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 2201,
+        "neutral": 339,
+        "negative": 2141
     },
     "plants": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 635,
+        "neutral": 75,
+        "negative": 302
     },
     "stores": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 1082,
+        "neutral": 116,
+        "negative": 889
     },
     "police": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 2961,
+        "neutral": 482,
+        "negative": 2391
     },
     "hospitals": {
-        "number_of_messages": 18476,
-        "average": 0.4475876734718845,
-        "median": 0.5068731904029846,
-        "variance": 0.003638353245273417,
-        "standard deviation": 0.060318763625205524,
-        "min": 0.37824922800064087,
-        "max": 0.5068731904029846
+        "positive": 2646,
+        "neutral": 358,
+        "negative": 1924
     }
 }

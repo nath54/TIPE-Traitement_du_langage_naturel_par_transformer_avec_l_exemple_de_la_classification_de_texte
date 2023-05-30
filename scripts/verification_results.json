@@ -1,0 +1,37 @@
+{
+    "city": {
+        "positive": 1110,
+        "neutral": 2834,
+        "negative": 1840
+    },
+    "cars": {
+        "positive": 1621,
+        "neutral": 5466,
+        "negative": 6017
+    },
+    "house": {
+        "positive": 720,
+        "neutral": 2297,
+        "negative": 1664
+    },
+    "plants": {
+        "positive": 81,
+        "neutral": 430,
+        "negative": 501
+    },
+    "stores": {
+        "positive": 273,
+        "neutral": 771,
+        "negative": 1043
+    },
+    "police": {
+        "positive": 482,
+        "neutral": 2797,
+        "negative": 2555
+    },
+    "hospitals": {
+        "positive": 917,
+        "neutral": 1765,
+        "negative": 2246
+    }
+}
