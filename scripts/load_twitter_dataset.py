@@ -14,7 +14,7 @@ def tensor_with_1(n, i):
 
 def main_twt_dataset_load():
     #print("Loading dataset...")
-    N = 5000
+    N = 50000
     train_pos = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_posit.txt")
     train_pos = train_pos[:min(len(train_pos), N)]
     train_neg = load_sentences("C:/Users/Cerisara Nathan/Documents/GitHub/TIPE/data/twitter_1.6/train_negat.txt")[:len(train_pos)]
