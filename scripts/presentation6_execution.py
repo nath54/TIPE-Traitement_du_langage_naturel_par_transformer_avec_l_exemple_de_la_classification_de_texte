@@ -82,10 +82,10 @@ for t in themes:
             del res
             torch.cuda.empty_cache()
             #
-            score_pos = unres[0]
-            score_neg = unres[1]
-            
-            if abs(score_pos - score_neg) < 0.25:
+            score_neg = unres[0]
+            score_pos = unres[1]
+
+            if abs(score_pos - score_neg) < 0.60:
                 res = "NEU"
             elif score_pos > score_neg:
                 res = "POS"
@@ -94,9 +94,12 @@ for t in themes:
             #
             sentiments[m] = res
         #
-        if res == "POS": nb_pos+=1
-        elif res == "NEU": nb_neu+=1
-        elif res == "NEG": nb_neg+=1
+        if res == "POS":
+            nb_pos+=1
+        elif res == "NEU":
+            nb_neu+=1
+        elif res == "NEG":
+            nb_neg+=1
 
     #
     themes_scores[t] = {
@@ -107,7 +110,7 @@ for t in themes:
 
 print("Saving the final results...")
 
-f=open("final_results.json", "w")
+f=open("final_results6.json", "w")
 json.dump(themes_scores, f)
 f.close()
 

@@ -184,11 +184,11 @@ scale=2
 	
 		\begin{multicols}{2}[]
 		
-		\textbf{Positional Encoding}
+		\textbf{Positional Encoding}\\
 		
-		$$p_k  = (s_0, c_1, \dots, s_{2i}, c_{2i+1}, \dots, s_N)$$
-		$$s_{2i} = \sin \left( k \cdot 10000^{- \frac{2i}{d_E}} \right)$$
-		$$c_{2i+1} = \cos \left( k \cdot 10000^{- \frac{2i+1}{d_E}} \right)$$
+		$k \in [\![1, N]\!]$
+		$$p_k  = (f_k(1), f_k(2), \dots, f_k(d_E))$$
+		$f_k(i)$ : position de chaque token dans la séquence
 		
 		\columnbreak
 		
@@ -489,6 +489,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 	\item \textbf{Rapport à la ville :}
 	\begin{itemize}
 		\item Analyser les sentiments des habitants sur différents sujets
+		\item Peut servir à aider par exemple les mairies pour déterminer ce qui est le plus urgent
 	\end{itemize}
 \end{itemize}
 
@@ -502,7 +503,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 \begin{itemize}
 	\item Architecture Transformer
-	\item Plusieurs tailles de BERT (base, large, ...)
+	\item Plusieurs tailles de BERT (base, large)
 	\item BERT base : $12 \times$ blocks encoder $\to 112$M paramètres 
 	\item BooksCorpus (800M words) and English Wikipedia (2,500M words)
 	\item Publié vers fin 2018 par des chercheurs de Google
@@ -559,7 +560,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 \begin{frame}{Les données et l'apprentissage}
 
 \begin{itemize}
-	\item \textbf{Données : } Twitter 1.6 billions sentiment
+	\item \textbf{Données : } Twitter Sentiment140  (1.6 millions Tweets)
 	\item Train : 50000, Test : 25000
 	\item \textbf{Temps d'entraînement : } $\approx$ 5h
 	\item \textbf{Algorithme d'apprentissage : } Adam optimizer (extension de la descente de gradient stochastique)
@@ -573,6 +574,12 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 %%%%%%%%% PAGE 12 : Les résultats %%%%%%%%%
 
 \begin{frame}{Les résultats}
+
+\begin{center}
+\resizebox{!}{(\textheight * 5 / 11)}{
+\includegraphics{result\_table.png}
+}
+\end{center}
 
 \end{frame}
 
@@ -709,7 +716,6 @@ Donc au final $CE(x, v) = \frac{1}{N} \sum_{i=1}^N E_i$
 \begin{frame}{Annexes: Comparaison avec le modèle GPT}
 
 
-
 \end{frame}
 
 
@@ -735,11 +741,13 @@ Les transformateurs sont des approximateurs universels des fonctions continues d
 %%%%%%%%% PAGE 21 : Annexe - Bibliographie %%%%%%%%%
 
 \begin{frame}{Annexes: Bibliographie}
-
+\footnotesize
 \begin{itemize}
-	\item Les différents papiers 
-	\item ``ARE TRANSFORMERS UNIVERSAL APPROXIMATORS
-OF SEQUENCE-TO-SEQUENCE FUNCTIONS?'', Google Research 2020
+	\item Pytorch documentation
+	\item ``Attention is all you need'', Google Research, 2017
+	\item ``BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'', Google AI Language, 2018
+	\item ``Improving Language Understanding by Generative Pre-Training'' OpenAI, 2018
+	\item ``ARE TRANSFORMERS UNIVERSAL APPROXIMATORS OF SEQUENCE-TO-SEQUENCE FUNCTIONS?'', Google Research, 2020
 \end{itemize}
 
 \end{frame}
