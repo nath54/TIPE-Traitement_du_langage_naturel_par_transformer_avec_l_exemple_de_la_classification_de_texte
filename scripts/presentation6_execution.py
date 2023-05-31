@@ -85,7 +85,7 @@ for t in themes:
             score_pos = unres[0]
             score_neg = unres[1]
             
-            if abs(score_pos - score_neg) < 0.2:
+            if abs(score_pos - score_neg) < 0.25:
                 res = "NEU"
             elif score_pos > score_neg:
                 res = "POS"

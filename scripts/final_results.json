@@ -1,37 +1,37 @@
 {
     "city": {
-        "positive": 2556,
-        "neutral": 385,
-        "negative": 2843
+        "positive": 2262,
+        "neutral": 1005,
+        "negative": 2517
     },
     "cars": {
-        "positive": 7162,
-        "neutral": 987,
-        "negative": 4955
+        "positive": 6375,
+        "neutral": 2465,
+        "negative": 4264
     },
     "house": {
-        "positive": 2201,
-        "neutral": 339,
-        "negative": 2141
+        "positive": 1942,
+        "neutral": 834,
+        "negative": 1905
     },
     "plants": {
-        "positive": 635,
-        "neutral": 75,
-        "negative": 302
+        "positive": 576,
+        "neutral": 170,
+        "negative": 266
     },
     "stores": {
-        "positive": 1082,
-        "neutral": 116,
-        "negative": 889
+        "positive": 987,
+        "neutral": 332,
+        "negative": 768
     },
     "police": {
-        "positive": 2961,
-        "neutral": 482,
-        "negative": 2391
+        "positive": 2621,
+        "neutral": 1209,
+        "negative": 2004
     },
     "hospitals": {
-        "positive": 2646,
-        "neutral": 358,
-        "negative": 1924
+        "positive": 2372,
+        "neutral": 874,
+        "negative": 1682
     }
 }

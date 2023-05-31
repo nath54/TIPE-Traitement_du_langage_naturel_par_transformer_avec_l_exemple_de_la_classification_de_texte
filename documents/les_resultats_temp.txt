@@ -1,0 +1,114 @@
+
+\begin{center}
+\resizebox{!}{(\textheight * 5 / 11)}{
+
+
+\begin{tabular}{ |c | c | c | } 
+
+\hline
+
+Themes & My model & A Verified Classification model \\
+
+\hline
+
+City & EmptyCell & 
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 1110) (NEU, 2834) (NEG, 1840)};
+\end{axis}
+\end{tikzpicture}
+}
+
+  \\
+
+\hline
+
+Cars & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 1621) (NEU, 5466) (NEG, 6017)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+House & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 720) (NEU, 2297) (NEG, 1664)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+Plants & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 81) (NEU, 430) (NEG, 501)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+Stores & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 273) (NEU, 771) (NEG, 1043)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+Police & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 482) (NEU, 2797) (NEG, 2555)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+Hospitals & EmptyCell & 
+
+
+\resizebox{\textwidth * 4 / 11}{!}{
+\begin{tikzpicture}
+\begin{axis}[ybar, symbolic x coords={POS, NEU, NEG}]
+\addplot+ coordinates {(POS, 917) (NEU, 1765) (NEG, 2246)};
+\end{axis}
+\end{tikzpicture}
+}
+ \\
+
+\hline
+
+\end{tabular}
+}
+\end{center}

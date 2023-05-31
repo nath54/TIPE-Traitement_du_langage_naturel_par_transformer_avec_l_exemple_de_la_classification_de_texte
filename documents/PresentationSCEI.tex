@@ -20,6 +20,10 @@
 \usepackage{tikz, pgfplots}
 \usetikzlibrary{positioning} % Add this line to load the positioning library
 \usetikzlibrary{fit}
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows}
+\pgfplotsset{compat=1.16}
+\usepgfplotslibrary{statistics}
 
 \usepackage{listings}
 \usepackage{tcolorbox}
@@ -520,9 +524,10 @@ EncBlock/.style = {rectangle, rounded corners, draw=green!30, fill=green!5, thic
 Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px, align=center},
 Bblock/.style = {rectangle, rounded corners, draw=black!40!green, fill =green!10, thick, minimum height = 50px, minimum width = 100px, align=center},
 FFblock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px, align=center},
-Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Vect/.style = {ellipse, draw=purple!80!red, thick, text width=8px, align=left, minimum width=40px, minimum height = 30px},
 Circ/.style = {circle, draw=black, thick},
 Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 ]
 
 %Blocks
@@ -530,13 +535,15 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Block] (BT) [right=25px of Inp] {BERT\\Tokenizer};
 \node[Bblock] (BE) [right=25px of BT] {BERT\\Encoder};
 \node[FFblock] (FFC) [right=25px of BE] {Feed Forward\\Classifier};
-\node[Vect] (Out) [right=25px of FFC] {$c$};
+\node (Out) [right=50px of FFC] {};
+\node[Vect] (Out1) [above=0px of Out] {$ \!\!\! S_{\text{pos}}\quad$};
+\node[Vect] (Out2) [below=0px of Out] {$\!\!\! S_{\text{neg}}  \quad$};
 
 %Arrows
 \draw[Fleche1] (Inp.east) to (BT.west);
 \draw[Fleche1] (BT.east) to (BE.west);
 \draw[Fleche1] (BE.east) to (FFC.west);
-\draw[Fleche1] (FFC.east) to (Out.west);
+\draw[Fleche2] (FFC.east) to (Out.west);
 
 \end{tikzpicture}
 }
@@ -566,14 +573,6 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 %%%%%%%%% PAGE 12 : Les résultats %%%%%%%%%
 
 \begin{frame}{Les résultats}
-
-\begin{center}
-\resizebox{(\textwidth * 11 / 11)}{!}{
-\begin{tikzpicture}
-
-\end{tikzpicture}
-}
-\end{center}
 
 \end{frame}
 
