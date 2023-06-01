@@ -35,6 +35,7 @@
 \title{Le traitement du langage naturel par transformers illustré par un exemple pour la classification de texte}
 
 \author{Cerisara Nathan, MPI}
+\date{SCEI: 10953}
 
 \begin{document}
 
@@ -854,6 +855,106 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \begin{frame}{Annexes: Comparaison avec le modèle GPT}
 
 
+\begin{center}
+	\resizebox{(\textwidth * 8 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	
+	\begin{minipage}{(\textwidth * 24  / 20)}
+		
+		\footnotesize
+		\setlength{\columnsep}{35px}
+		\begin{multicols*}{2}[]
+
+			\textbf{Architecture:}
+			\begin{itemize}
+				\item BERT : Encodeur - Décodeur
+				\item GPT : Decodeur seulement
+			\end{itemize}
+			
+			\textbf{Contexte:}
+			\begin{itemize}
+				\item BERT : Bidirectionnel
+				\item GPT : A gauche seulement
+			\end{itemize}
+			
+			\textbf{Utilisation:}
+			\begin{itemize}
+				\item BERT : Classification, Traduction
+				\item GPT : Génération de texte
+			\end{itemize}
+
+			\columnbreak
+
+						
+			\begin{center}
+
+			\resizebox{!}{(\textheight * 10  / 11)}{%
+			\begin{tikzpicture}[
+				DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=160px, minimum height=206px},
+				Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+				Ablock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
+				FFblock/.style = {rectangle, rounded corners, draw=black!40!orange, fill =orange!10, thick, minimum height = 50px, minimum width = 100px},
+				Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+				Circ/.style = {circle, draw=black, thick},
+				Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+			]
+
+			%Decoder Input
+			\node (Dinp) {};
+			\node[font=\footnotesize] (Dinp_dots) [right=0px of Dinp] {$\dots$};
+			\node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$x_2$};
+			\node[Vect] (Dinp_1) [left=5px of Dinp_2] {$x_1$};
+			\node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$x_N$};
+			\node (txt_Dinp) [left=5px of Dinp_1] {Input};
+
+			%Global Encoder Block
+			\node[DecBlock] (Dec) [above=10px of Einp] {};
+			\node (Txt_Decoder) [left=8px of Dec] {Decoder Block};
+
+			% MultiHead Self-Attention Block
+			\node[Ablock] (Att) [above=15px of Dinp] {\textbf{Masked} MultiHead Self-Attention};
+			\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+
+			%Attention output
+			\node (Aout) [above=15px of AN1] {};
+			\node[font=\footnotesize] (Aout_dots) [right=0px of Aout] {$\dots$};
+			\node[Vect] (Aout_2) [left=5px of Aout_dots] {$x_2$};
+			\node[Vect] (Aout_1) [left=5px of Aout_2] {$x_1$};
+			\node[Vect] (Aout_N) [right=5px of Aout_dots] {$x_N$};
+
+			%FF block
+			\node[FFblock] (FF) [above=15px of Aout] {Feed Forward Layer};
+			\node[Block] (AN2) [above=15px of FF] {Add \& Normalize};
+
+			%Encoder Output
+			\node (Eout) [above=15px of AN2] {};
+			\node[font=\footnotesize] (Eout_dots) [right=0px of Eout] {$\dots$};
+			\node[Vect] (Eout_2) [left=5px of Eout_dots] {$x_2$};
+			\node[Vect] (Eout_1) [left=5px of Eout_2] {$x_1$};
+			\node[Vect] (Eout_N) [right=5px of Eout_dots] {$x_N$};
+			\node (txt_Eout) [left=5px of Eout_1] {Output};
+
+			%Arrows
+			\draw[Fleche1] (Einp.north) to (Att.south);
+			\draw[Fleche1] (Att.north) to (AN1.south);
+			\draw[Fleche1] (AN1.north) to (Aout.south);
+			\draw[Fleche1] (Aout.north) to (FF.south);
+			\draw[Fleche1] (FF.north) to (AN2.south);
+			\draw[Fleche1] (AN2.north) to (Eout.south);
+
+			\draw[Fleche1] (Dinp_N.east) .. controls +(right:60px) and +(right:60px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN1.east);
+			\draw[Fleche1] (Aout_N.east) .. controls +(right:60px) and +(right:60px) .. node[Circ,scale=0.7, fill=white] {$+$} (AN2.east);
+			\end{tikzpicture}
+			}
+			\end{center}
+			
+
+		\end{multicols*}
+		\normalsize
+	\end{minipage}
+	}
+\end{center}
+
+
 \end{frame}
 
 
@@ -885,6 +986,7 @@ Les transformateurs sont des approximateurs universels des fonctions continues d
 	\item ``Attention is all you need'', Google Research, 2017
 	\item ``BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'', Google AI Language, 2018
 	\item ``Improving Language Understanding by Generative Pre-Training'' OpenAI, 2018
+	\item ``The Illustrated GPT-2 (Visualizing Transformer Language Models)'' (https://jalammar.github.io/illustrated-gpt2/)
 	\item ``ARE TRANSFORMERS UNIVERSAL APPROXIMATORS OF SEQUENCE-TO-SEQUENCE FUNCTIONS?'', Google Research, 2020
 \end{itemize}
 
