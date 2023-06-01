@@ -243,8 +243,6 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
 
 \begin{frame}{La partie Encodeur}
 
-Schéma d'un block de la partie Encodeur de l'architecture Transformer :
-
 \begin{center}
 
 \resizebox{!}{(\textheight * 8 / 11)}{%
@@ -666,19 +664,19 @@ class Net(nn.Module):
 \begin{frame}{Annexes: Adam Optimizer}
 
 \begin{center}
-	\resizebox{(\textwidth * 8 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	\resizebox{(\textwidth * 10 / 10)}{!}{%{(\textheight * 4 / 17)}{
 	
 	\begin{minipage}{(\textwidth * 24  / 20)}
 		
 		\footnotesize
-		\setlength{\columnsep}{35px}
+		\setlength{\columnsep}{25px}
 		\begin{multicols*}{2}[]
 
 		\textbf{Descente de gradient stochastique}\\
 
 		Différences avec Descente de Gradient :
 		\begin{itemize}
-			\item Batch de données \textbf{ vs } Dataset Entier
+			\item Batch de données \textbf{ vs } Dataset entier
 			\item Plus efficace en terme de calculs
 			\item Ne se bloque pas forcément dans un minimum local
 			\item Plus flexible pour le taux d'apprentissage
