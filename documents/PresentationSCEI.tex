@@ -664,7 +664,41 @@ class Net(nn.Module):
 
 \begin{frame}{Annexes: Adam Optimizer}
 
+\begin{center}
+	\resizebox{(\textwidth * 8 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	
+	\begin{minipage}{(\textwidth * 24  / 20)}
+		
+		\footnotesize
+		\setlength{\columnsep}{35px}
+		\begin{multicols*}{2}[]
 
+		\textbf{Descente de gradient stochastique}\\
+
+		Différences avec Descente de Gradient :
+		\begin{itemize}
+			\item Batch de données \textbf{ vs } Dataset Entier
+			\item Plus efficace en terme de calculs
+			\item Ne se bloque pas forcément dans un minimum local
+			\item Plus flexible pour le taux d'apprentissage
+		\end{itemize}
+
+		\columnbreak
+
+		\textbf{Adam : Adaptive Moment Estimation}
+
+		\begin{itemize}
+			\item pour chaque itération : Moyenne mobile exponentielle des valeurs historiques du gradient
+			\item Taux d'apprentissage adaptatif (individuellement pour chaque paramètre) sur la base du 		premier (Moyenne) et deuxième moment (Variance) du gradient
+			\item Correction de biais
+			\item Mise à jour des paramètres
+		\end{itemize}
+
+		\end{multicols*}
+		\normalsize
+	\end{minipage}
+	}
+\end{center}
 
 \end{frame}
 
@@ -694,7 +728,20 @@ Donc au final $CE(x, v) = \frac{1}{N} \sum_{i=1}^N E_i$
 
 \begin{frame}{Annexes: LayerNormalization}
 
+\footnotesize
+\textbf{Entrée : } Tensor $X$ de dimensions : (batch\_size, sequence\_length, embedding\_size)
 
+\textbf{Opérations : }
+
+\begin{itemize}
+	\item La moyenne $E(X)$ et la Variance $V(X)$ (sur la dimension de l'embedding de l'entrée)
+	\item Normalization : $$N_X = \frac{X - E(X)}{\sqrt{V(X)}}$$
+	\item Mise à l'échelle et décalage : $$N_x \cdot \alpha + \beta$$
+\end{itemize}
+
+$$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + \beta$$
+
+\normalsize
 
 \end{frame}
 
@@ -706,6 +753,97 @@ Donc au final $CE(x, v) = \frac{1}{N} \sum_{i=1}^N E_i$
 \begin{frame}{Annexes: Partie décodeur de l'architecture transformer}
 
 
+\begin{center}
+
+\resizebox{!}{(\textheight * 8 / 11)}{%
+\begin{tikzpicture}[
+DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=150px, minimum height=335px},
+Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
+Ablock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
+FFblock/.style = {rectangle, rounded corners, draw=black!40!orange, fill =orange!10, thick, minimum height = 50px, minimum width = 100px},
+Vect/.style = {circle, draw=purple!80!red, thick, font=\footnotesize, text width=8px, align=left},
+Circ/.style = {circle, draw=black, thick},
+Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
+]
+
+%Decoder Input
+\node (Dinp) {};
+\node[font=\footnotesize] (Dinp_dots) [right=0px of Dinp] {$\dots$};
+\node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$x_2$};
+\node[Vect] (Dinp_1) [left=5px of Dinp_2] {$x_1$};
+\node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$x_N$};
+\node (txt_Dinp) [left=5px of Dinp_1] {Input};
+
+%Global Encoder Block
+\node[DecBlock] (Dec) [above=10px of Dinp] {};
+\node (Txt_Decoder) [right=8px of Dec] {Decoder Block};
+
+% MultiHead Self-Attention Block
+\node[Ablock] (Att) [above=15px of Einp] {MultiHead Self-Attention};
+\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+
+%Attention output
+\node (Aout) [above=15px of AN1] {};
+\node[font=\footnotesize] (Aout_dots) [right=0px of Aout] {$\dots$};
+\node[Vect] (Aout_2) [left=5px of Aout_dots] {$x_2$};
+\node[Vect] (Aout_1) [left=5px of Aout_2] {$x_1$};
+\node[Vect] (Aout_N) [right=5px of Aout_dots] {$x_N$};
+
+
+% MultiHead Cross-Attention Block
+\node[Ablock] (Catt) [above=15px of Aout] {MultiHead Cross-Attention};
+\node[Block] (AN2) [above=15px of Catt] {Add \& Normalize};
+
+% Encoder Output
+\node (Eout) [left = 50px of Catt] {};
+\node[font=\footnotesize] (Eout_dots) [above=0px of Eout] {$\dots$};
+\node[Vect] (Eout_2) [below=5px of Eout_dots] {$y_2$};
+\node[Vect] (Eout_1) [below=5px of Eout_2] {$y_1$};
+\node[Vect] (Eout_N) [above=5px of Eout_dots] {$y_N$};
+
+\node (Eout_text) [below=7px of Eout_1] {Encoder Output};
+
+\node [fit=(Eout_1) (Eout_N), draw=green, dashed, thick, inner sep=5pt, rounded corners] (box) {};
+  
+  
+%Cross-Attention output
+\node (CAout) [above=15px of AN2] {};
+\node[font=\footnotesize] (CAout_dots) [right=0px of CAout] {$\dots$};
+\node[Vect] (CAout_2) [left=5px of CAout_dots] {$x_2$};
+\node[Vect] (CAout_1) [left=5px of CAout_2] {$x_1$};
+\node[Vect] (CAout_N) [right=5px of CAout_dots] {$x_N$};
+
+
+%FF block
+\node[FFblock] (FF) [above=15px of CAout] {Feed Forward Layer};
+\node[Block] (AN3) [above=15px of FF] {Add \& Normalize};
+
+%Decoder Output
+\node (Dout) [above=15px of AN3] {};
+\node[font=\footnotesize] (Dout_dots) [right=0px of Dout] {$\dots$};
+\node[Vect] (Dout_2) [left=5px of Dout_dots] {$x_2$};
+\node[Vect] (Dout_1) [left=5px of Dout_2] {$x_1$};
+\node[Vect] (Dout_N) [right=5px of Dout_dots] {$x_N$};
+\node (txt_Dout) [left=5px of Dout_1] {Output};
+
+%Arrows
+\draw[Fleche1] (Dinp.north) to (Att.south);
+\draw[Fleche1] (Att.north) to (AN1.south);
+\draw[Fleche1] (AN1.north) to (Aout.south);
+\draw[Fleche1] (Aout.north) to (Catt.south);
+\draw[Fleche1] (Catt.north) to (AN2.south);
+\draw[Fleche1] (AN2.north) to (CAout.south);
+\draw[Fleche1] (Eout.east) to (Catt.west);
+\draw[Fleche1] (CAout.north) to (FF.south);
+\draw[Fleche1] (FF.north) to (AN3.south);
+\draw[Fleche1] (AN3.north) to (Dout.south);
+
+\draw[Fleche1] (Einp_N.east) .. controls +(right:45px) and +(right:45px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN1.east);
+\draw[Fleche1] (Aout_N.east) .. controls +(right:45px) and +(right:45px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN2.east);
+\draw[Fleche1] (CAout_N.east) .. controls +(right:45px) and +(right:45px) .. node[Circ,scale=0.7, fill=white] {$+$} (AN3.east);
+\end{tikzpicture}
+}
+\end{center}
 
 \end{frame}
 
