@@ -391,6 +391,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \resizebox{(\textwidth * 6/ 11)}{!}{%
 \begin{tikzpicture}[
 Lin/.style = {rectangle, rounded corners, draw=red!30!yellow!50, fill =yellow!10, dashed, thick, minimum height = 15px, minimum width = 150px},
+GeLU/.style = {rectangle, rounded corners, draw=blue!30!purple!50, fill =blue!10, dashed, thick, minimum height = 15px, minimum width = 150px},
 Vect/.style = {circle, draw=purple!150!red, thick, font=\footnotesize, text width=8px, align=left},
 Vect2/.style = {circle, draw=purple!150!red, thick, font=\footnotesize, text width=8px, align=left},
 Circ/.style = {circle, draw=black, thick},
@@ -410,6 +411,7 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Lin] (Lin1) [above=15px of FFinp] {};
 \node (Txt_lin1) [left=5px of Lin1] {Linear Layer 1};
 
+
 %Hidden Layer
 \node (Hl) [above= 15px of Lin1] {};
 \node[font=\footnotesize] (Hl_dots) [above= 45px of FFinp] {$\dots$};
@@ -419,8 +421,21 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Vect] (Hl_D) [right=10px of Hl_D1] {$h_D$};
 \node (txt_Hl) [left=10px of Hl_1] {Hidden State $H$};
 
+%GeLU
+\node[GeLU] (Gelu) [above=15px of Hl_dots] {};
+\node (Txt_Glu) [left=5px of Gelu] {GeLU activation};
+
+%Activated Hidden Layer 
+\node (AHl) [above= 5px of Gelu] {};
+\node[font=\footnotesize] (AHl_dots) [above= 0px of AHl] {$\dots$};
+\node[Vect] (AHl_2) [left=10px of AHl_dots] {$h_2$};
+\node[Vect] (AHl_1) [left=10px of AHl_2] {$h_1$};
+\node[Vect2, minimum width=28px] (AHl_D1) [right=10px of AHl_dots] {$\!\!\!\! h_{D-1}$};
+\node[Vect] (AHl_D) [right=10px of AHl_D1] {$h_D$};
+\node (txt_AHl) [left=10px of AHl_1] {Hidden State $H$};
+
 %Linear2
-\node[Lin] (Lin2) [above=15px of Hl_dots] {};
+\node[Lin] (Lin2) [above=15px of AHl_dots] {};
 \node (Txt_lin2) [left=5px of Lin2] {Linear Layer 2};
 
 %FF Output
@@ -447,20 +462,28 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \draw[Trait] (FFinp_N.north) to (Hl_2.south);
 \draw[Trait] (FFinp_N.north) to (Hl_1.south);
 
-\draw[Trait] (FFout_1.south) to (Hl_D.north);
-\draw[Trait] (FFout_1.south) to (Hl_D1.north);
-\draw[Trait] (FFout_1.south) to (Hl_2.north);
-\draw[Trait] (FFout_1.south) to (Hl_1.north);
 
-\draw[Trait] (FFout_2.south) to (Hl_D.north);
-\draw[Trait] (FFout_2.south) to (Hl_D1.north);
-\draw[Trait] (FFout_2.south) to (Hl_2.north);
-\draw[Trait] (FFout_2.south) to (Hl_1.north);
 
-\draw[Trait] (FFout_N.south) to (Hl_D.north);
-\draw[Trait] (FFout_N.south) to (Hl_D1.north);
-\draw[Trait] (FFout_N.south) to (Hl_2.north);
-\draw[Trait] (FFout_N.south) to (Hl_1.north);
+\draw[Trait] (AHl_D.south) to (Hl_D.north);
+\draw[Trait] (AHl_D1.south) to (Hl_D1.north);
+\draw[Trait] (AHl_2.south) to (Hl_2.north);
+\draw[Trait] (AHl_1.south) to (Hl_1.north);
+
+
+\draw[Trait] (FFout_1.south) to (AHl_D.north);
+\draw[Trait] (FFout_1.south) to (AHl_D1.north);
+\draw[Trait] (FFout_1.south) to (AHl_2.north);
+\draw[Trait] (FFout_1.south) to (AHl_1.north);
+
+\draw[Trait] (FFout_2.south) to (AHl_D.north);
+\draw[Trait] (FFout_2.south) to (AHl_D1.north);
+\draw[Trait] (FFout_2.south) to (AHl_2.north);
+\draw[Trait] (FFout_2.south) to (AHl_1.north);
+
+\draw[Trait] (FFout_N.south) to (AHl_D.north);
+\draw[Trait] (FFout_N.south) to (AHl_D1.north);
+\draw[Trait] (FFout_N.south) to (AHl_2.north);
+\draw[Trait] (FFout_N.south) to (AHl_1.north);
 \end{tikzpicture}
 }
 \end{center}
@@ -578,6 +601,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 \resizebox{!}{(\textheight * 5 / 11)}{
 \includegraphics{result\_table.png}
 }
+Twitter news dataset (https://www.kaggle.com)
 \end{center}
 
 \end{frame}
@@ -593,6 +617,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 	\resizebox{(\textwidth * 9 / 10)}{!}{%{(\textheight * 4 / 17)}{
 	
 	\begin{minipage}{(\textwidth * 21  / 20)}
+	
 		
 \setlength{\columnsep}{1pt}
 \begin{multicols*}{2}[]
@@ -618,6 +643,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 	\item Adam optimizer
 	\item La fonction de loss
 	\item La Normalisation par couche (LayerNorm)
+	\item Fonctions Softmax et GeLU
 	\item La partie décodeur
 	\item Comparaison avec le modèle GPT
 	\item Bibliographie
@@ -744,9 +770,72 @@ $$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + 
 \end{frame}
 
 
+%%%%%%%%% PAGE 18 : Annexe - Fonction Softmax et GeLU %%%%%%%%%
+
+\begin{frame}{Annexes: Fonction Softmax et GeLU}
+
+\begin{center}
+	\resizebox{(\textwidth * 10 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	
+	\begin{minipage}{(\textwidth * 24  / 20)}
+		
+		\footnotesize
+		\setlength{\columnsep}{25px}
+		\begin{multicols*}{2}[]
+
+		\textbf{Fonction Softmax:}\\
+
+		Pour $z = (z_1, \dots, z_N)$
+	
+		$$\text{Softmax}(z) = \left ( \frac{e^{z_i}}{\sum_{k=1}^{N} e^{z_k}} \right )_i$$
+		
+		Pour $i \in [\![1, N]\!]$
+
+		\columnbreak
+
+		\textbf{ReLU et GeLU :}
+		
+		\resizebox{!}{\textheight *5 / 10}{
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}
+				\begin{axis}[
+					xlabel={$x$},
+					ylabel={$y$},
+					axis lines=middle,
+					xmin=-5, xmax=5,
+					ymin=-1, ymax=5,
+					xtick={-5,...,5},
+					ytick={-1,...,5},
+					grid=both,
+					grid style={line width=0.1pt, draw=gray!30},
+					major grid style={line width=0.2pt,draw=gray!50},
+					minor tick num=1,
+					enlargelimits={abs=0.5},
+					width=10cm,
+					height=8cm,
+					]
+
+					\addplot[domain=-5:5, samples=100, ultra thick, blue]{max(0,x)};
+					\addplot[domain=-5:5, samples=100, ultra thick, red]{0.5*(1+tanh(sqrt(2/pi)*(x+0.044715*x^3)))};
+
+				\end{axis}
+			\end{tikzpicture}
+			\caption{ReLU and GeLU functions}
+		\end{figure}
+		}
 
 
-%%%%%%%%% PAGE 18 : Annexe - Partie décodeur de l'architecture transformer %%%%%%%%%
+		\end{multicols*}
+		\normalsize
+	\end{minipage}
+	}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%% PAGE 19 : Annexe - Partie décodeur de l'architecture transformer %%%%%%%%%
 
 \begin{frame}{Annexes: Partie décodeur de l'architecture transformer}
 
@@ -847,7 +936,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 
-%%%%%%%%% PAGE 19 : Annexe - Comparaison avec le modème GPT %%%%%%%%%
+%%%%%%%%% PAGE 20 : Annexe - Comparaison avec le modème GPT %%%%%%%%%
 
 \begin{frame}{Annexes: Comparaison avec le modèle GPT}
 
@@ -956,7 +1045,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 
-%%%%%%%%% PAGE 20 : Annexe - Bibliographie %%%%%%%%%
+%%%%%%%%% PAGE 21 : Annexe - Bibliographie %%%%%%%%%
 
 \begin{frame}{Annexes: Bibliographie}
 \footnotesize
