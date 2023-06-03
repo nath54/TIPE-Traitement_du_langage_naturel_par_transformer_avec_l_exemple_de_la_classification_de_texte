@@ -43,34 +43,32 @@
 
 %%%%%%%%% PAGE 1 : SOMMAIRE %%%%%%%%%
 
-\begin{frame}{Sommaire}
+\begin{frame}{Plan de la présentation}
 
-\begin{itemize}
+\begin{enumerate}
   \item Architecture Transformer
-  	\begin{itemize}
+  	\begin{enumerate}
   		\item Vectorisation du texte
   		\item La partie Encodeur de l'architecture
   		\item Les matrices d'Attention
   		\item Le réseau Feed Forward
-  	\end{itemize}
+  	\end{enumerate}
   \vspace{7px}
   \item Application personnelle
-     \begin{itemize}
-      		\item Objectif / Rapport à la ville
+     \begin{enumerate}
+      		\item Objectif
       		\item Le modèle BERT
       		\item La structure du réseau de neurone utilisée
       		\item Les données et l'apprentissage
       		\item Les résultats
-     \end{itemize}
-     \vspace{7px}
-     \item Annexes
-\end{itemize}
+     \end{enumerate}
+\end{enumerate}
 
 \end{frame}
 
 %%%%%%%%% PAGE 2 : L'architecture Transformer %%%%%%%%%
 
-\begin{frame}{L'architecture Transformer}
+\begin{frame}{1. L'architecture Transformer}
 Schéma de l'architecture dans le cas de la génération :
 
 \begin{center}
@@ -90,11 +88,11 @@ scale=2
 
 %Encoder Blocks
 \node[Block] (Tok) {Tokenizer};
-\node[Block, align=center] (EPE)  [above=15px of Tok] {Embedding + \\Positional Encoding};
-\node[Eblock] (Enc1) [above=15px of EPE] {Encoder $1$};
-\node[Eblock] (Enc2) [above=15px of Enc1] {Encoder $2$};
+\node[Block, align=center] (EPE)  [above=15px of Tok] {Embedding + \\Encodage Positionnel};
+\node[Eblock] (Enc1) [above=15px of EPE] {Encodeur $1$};
+\node[Eblock] (Enc2) [above=15px of Enc1] {Encodeur $2$};
 \node (dots1) [above=15px of Enc2] {$\dots$};
-\node[Eblock] (EncN) [above=15px of dots1] {Encoder $N_e$};
+\node[Eblock] (EncN) [above=15px of dots1] {Encodeur $N_e$};
 
 %Encoder Input
 \node (Einp) [below=20px of Tok] {};
@@ -102,7 +100,7 @@ scale=2
 \node[Vect] (Einp_2) [left=5px of Einp_dots] {$x_2$};
 \node[Vect] (Einp_1) [left=5px of Einp_2] {$x_1$};
 \node[Vect] (Einp_N) [right=5px of Einp_dots] {$x_N$};
-\node (txt_Einp) [left=5px of Einp_1] {Input};
+\node (txt_Einp) [left=5px of Einp_1] {Entrée};
 
 %Encoder Output
 \node (Eout) [above=20px of EncN] {};
@@ -110,14 +108,14 @@ scale=2
 \node[Vect] (Eout_2) [left= 5px of Eout_dots] {$z_2$};
 \node[Vect] (Eout_1) [left=5px of Eout_2] {$z_1$};
 \node[Vect] (Eout_N) [right=5px of Eout_dots] {$z_N$};
-\node (txt_Eout) [left=5px of Eout_1] {Encoder output};
+\node (txt_Eout) [left=5px of Eout_1] {Sortie de l'encodeur};
 
 %Decoder Blocks
-\node[Dblock] (Dec1) [right=75px of Enc1] {Decoder $1$};
-\node[Dblock] (Dec2) [above=15px of Dec1] {Decoder $2$};
+\node[Dblock] (Dec1) [right=75px of Enc1] {Decodeur $1$};
+\node[Dblock] (Dec2) [above=15px of Dec1] {Decodeur $2$};
 \node (dots2) [above=15px of Dec2] {$\dots$};
-\node[Dblock] (DecN) [above=15px of dots2] {Decoder $N_d$};
-\node[Block, align=center] (Probs) [above=15px of DecN] {Predict the probabilities\\ of the next token};
+\node[Dblock] (DecN) [above=15px of dots2] {Decodeur $N_d$};
+\node[Block, align=center] (Probs) [above=15px of DecN] {Prédit les probabilités\\ du prochain token};
 
 %Decoder Input
 \node (Dinp) [below=20px of Dec1] {};
@@ -125,7 +123,7 @@ scale=2
 \node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$y_2$};
 \node[Vect] (Dinp_1) [left=5px of Dinp_2] {$y_1$};
 \node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$y_N$};
-\node (txt_Dinp) [right=5px of Dinp_N] {Decoder Masked Input};
+\node (txt_Dinp) [right=5px of Dinp_N] {Entrée Masquée du Décodeur};
 
 %Arrows
 \draw[Fleche1] (Einp.north) to (Tok.south);
@@ -153,7 +151,7 @@ scale=2
 
 %%%%%%%%% PAGE 3 : Tokenisation & Embeddings %%%%%%%%%
 
-\begin{frame}{Vectorisation du texte : Tokenisation du texte}
+\begin{frame}{1.1 Vectorisation du texte : Tokenisation du texte}
 
 \textbf{Tokenizer (bert-base-uncased)}
 
@@ -173,7 +171,7 @@ scale=2
 
 
 %%%%%%%%% PAGE 4 : Embeddings + Positional Encoding %%%%%%%%%
-\begin{frame}{Vectorisation du texte : Embeddings \& Positional Encoding}
+\begin{frame}{1.1 Vectorisation du texte : Embeddings \& Encodage Positionnel}
 
 
 \begin{center}
@@ -185,7 +183,7 @@ scale=2
 	
 		\begin{multicols}{2}[]
 		
-		\textbf{Positional Encoding}\\
+		\textbf{Encodage Positionnel}\\
 		
 		$k \in [\![1, N]\!]$
 		$$p_k  = (f_k(1), f_k(2), \dots, f_k(d_E))$$
@@ -203,34 +201,34 @@ scale=2
 \end{center}
 
 \begin{center}
-\resizebox{!}{(\textheight * 5 / 18)}{
+\resizebox{!}{(\textheight * 7 / 18)}{
 \begin{tikzpicture}[
 Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
 ]
 
 %Blocks
 
-\node (Sentence) {Sentence};
-\node (Tokens) [right=15px of Sentence] {Tokens};
+%\node (Sentence) {Sentence};
+\node (Tokens) {Tokens};
 \node (TokensT) [below=0px of Tokens] {$T = [t_1, \dots, t_N] \quad$};
 \node (EmptySpace) [right=80px of Tokens] {};
-\node (TokenEmbedding) [above=15px of EmptySpace] {TokenEmbedding};
+\node (TokenEmbedding) [above=15px of EmptySpace] {Token Embedding};
 \node (EmbeddingE) [above=0px of TokenEmbedding] {$E = [e_1, \dots, e_N]$};
-\node (PositionalEncoding) [below=15px of EmptySpace] {Positional Encoding};
+\node (PositionalEncoding) [below=15px of EmptySpace] {Encodage Positionnel};
 \node (PositionalP) [below=0px of PositionalEncoding] {$P = [p_1, \dots, p_N]$};
 \node (LayerNorm) [right=80px of EmptySpace] {LayerNormalization $(E + P)$};
-\node (Model) [right=15px of LayerNorm] {Model};
+%\node (Model) [right=15px of LayerNorm] {Model};
 
-  \node [fit=(Sentence) (Model) (EmbeddingE) (PositionalP), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
+  \node [fit=(TokensT) (LayerNorm) (EmbeddingE) (PositionalP), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
 
 %Fleches
 
-\draw[Fleche1] (Sentence.east) to (Tokens.west);
+% \draw[Fleche1] (Sentence.east) to (Tokens.west);
 \draw[Fleche1] (Tokens.east) to (TokenEmbedding.west);
 \draw[Fleche1] (Tokens.east) to (PositionalEncoding.west);
 \draw[Fleche1] (TokenEmbedding.east) to (LayerNorm.west);
 \draw[Fleche1] (PositionalEncoding.east) to (LayerNorm.west);
-\draw[Fleche1] (LayerNorm.east) to (Model.west);
+%\draw[Fleche1] (LayerNorm.east) to (Model.west);
 
 \end{tikzpicture}
 }
@@ -241,7 +239,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
 
 %%%%%%%%% PAGE 5 : Vectorisation du texte %%%%%%%%%
 
-\begin{frame}{La partie Encodeur}
+\begin{frame}{1.2 La partie Encodeur}
 
 \begin{center}
 
@@ -262,15 +260,15 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Vect] (Einp_2) [left=5px of Einp_dots] {$x_2$};
 \node[Vect] (Einp_1) [left=5px of Einp_2] {$x_1$};
 \node[Vect] (Einp_N) [right=5px of Einp_dots] {$x_N$};
-\node (txt_Einp) [left=5px of Einp_1] {Input};
+\node (txt_Einp) [left=5px of Einp_1] {Entrée};
 
 %Global Encoder Block
 \node[EncBlock] (Enc) [above=10px of Einp] {};
-\node (Txt_Encoder) [left=8px of Enc] {Encoder Block};
+\node (Txt_Encoder) [left=8px of Enc] {Bloc Encodeur};
 
 % MultiHead Self-Attention Block
-\node[Ablock] (Att) [above=15px of Einp] {MultiHead Self-Attention};
-\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+\node[Ablock] (Att) [above=15px of Einp] {Self-Attention Multi-Tête};
+\node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 %Attention output
 \node (Aout) [above=15px of AN1] {};
@@ -280,8 +278,8 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Vect] (Aout_N) [right=5px of Aout_dots] {$x_N$};
 
 %FF block
-\node[FFblock] (FF) [above=15px of Aout] {Feed Forward Layer};
-\node[Block] (AN2) [above=15px of FF] {Add \& Normalize};
+\node[FFblock] (FF) [above=15px of Aout] {Couche Feed Forward};
+\node[Block] (AN2) [above=15px of FF] {Somme \& Normalise};
 
 %Encoder Output
 \node (Eout) [above=15px of AN2] {};
@@ -289,7 +287,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Vect] (Eout_2) [left=5px of Eout_dots] {$x_2$};
 \node[Vect] (Eout_1) [left=5px of Eout_2] {$x_1$};
 \node[Vect] (Eout_N) [right=5px of Eout_dots] {$x_N$};
-\node (txt_Eout) [left=5px of Eout_1] {Output};
+\node (txt_Eout) [left=5px of Eout_1] {Sortie};
 
 %Arrows
 \draw[Fleche1] (Einp.north) to (Att.south);
@@ -308,7 +306,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 %%%%%%%%% PAGE 6 : Matrices d'attention %%%%%%%%%
 
-\begin{frame}{Matrice d'attention}
+\begin{frame}{1.3 Matrice d'attention}
 
 
 \begin{center}
@@ -381,14 +379,14 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 %%%%%%%%% PAGE 7 : Le réseau Feed Forward %%%%%%%%%
 
-\begin{frame}{Le réseau Feed Forward}
+\begin{frame}{1.4 Le réseau Feed Forward}
 
 
-\setlength{\columnsep}{50pt}
+\setlength{\columnsep}{90pt}
 \begin{multicols*}{2}[]
 
 \begin{center}
-\resizebox{(\textwidth * 6/ 11)}{!}{%
+\resizebox{(\textwidth * 8/ 12)}{!}{%
 \begin{tikzpicture}[
 Lin/.style = {rectangle, rounded corners, draw=red!30!yellow!50, fill =yellow!10, dashed, thick, minimum height = 15px, minimum width = 150px},
 GeLU/.style = {rectangle, rounded corners, draw=blue!30!purple!50, fill =blue!10, dashed, thick, minimum height = 15px, minimum width = 150px},
@@ -405,11 +403,11 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Vect] (FFinp_2) [left=10px of FFinp_dots] {$x_2$};
 \node[Vect] (FFinp_1) [left=10px of FFinp_2] {$x_1$};
 \node[Vect] (FFinp_N) [right=10px of FFinp_dots] {$x_N$};
-\node (txt_FFinp) [left=10px of FFinp_1] {Input $X$};
+\node (txt_FFinp) [left=10px of FFinp_1] {Entrée $X$};
 
 %Linear1
 \node[Lin] (Lin1) [above=15px of FFinp] {};
-\node (Txt_lin1) [left=5px of Lin1] {Linear Layer 1};
+\node (Txt_lin1) [left=5px of Lin1] {Couche linéaire 1};
 
 
 %Hidden Layer
@@ -419,11 +417,11 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Vect] (Hl_1) [left=10px of Hl_2] {$h_1$};
 \node[Vect2, minimum width=28px] (Hl_D1) [right=10px of Hl_dots] {$\!\!\!\! h_{D-1}$};
 \node[Vect] (Hl_D) [right=10px of Hl_D1] {$h_D$};
-\node (txt_Hl) [left=10px of Hl_1] {Hidden State $H$};
+\node (txt_Hl) [left=10px of Hl_1] {Couche cachée $H$};
 
 %GeLU
 \node[GeLU] (Gelu) [above=15px of Hl_dots] {};
-\node (Txt_Glu) [left=5px of Gelu] {GeLU activation};
+\node (Txt_Glu) [left=5px of Gelu] {Activation GeLU};
 
 %Activated Hidden Layer 
 \node (AHl) [above= 5px of Gelu] {};
@@ -432,11 +430,11 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Vect] (AHl_1) [left=10px of AHl_2] {$h_1$};
 \node[Vect2, minimum width=28px] (AHl_D1) [right=10px of AHl_dots] {$\!\!\!\! h_{D-1}$};
 \node[Vect] (AHl_D) [right=10px of AHl_D1] {$h_D$};
-\node (txt_AHl) [left=10px of AHl_1] {Hidden State $H$};
+\node (txt_AHl) [left=10px of AHl_1] {};
 
 %Linear2
 \node[Lin] (Lin2) [above=15px of AHl_dots] {};
-\node (Txt_lin2) [left=5px of Lin2] {Linear Layer 2};
+\node (Txt_lin2) [left=5px of Lin2] {Couche linéaire 2};
 
 %FF Output
 \node (FFout)  [above=15px of Lin2] {};
@@ -444,7 +442,7 @@ Trait/.style = {-, shorten <=1px, shorten >= 1px},
 \node[Vect] (FFout_2) [left=10px of FFout_dots] {$y_2$};
 \node[Vect] (FFout_1) [left=10px of FFout_2] {$y_1$};
 \node[Vect] (FFout_N) [right=10px of FFout_dots] {$y_N$};
-\node (txt_FFout) [left=10px of FFout_1] {Output $Y$};
+\node (txt_FFout) [left=10px of FFout_1] {Sortie $Y$};
 
 %Nodes Connections
 \draw[Trait] (FFinp_1.north) to (Hl_D.south);
@@ -499,7 +497,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 %%%%%%%%% PAGE 8 : Le réseau Feed Forward %%%%%%%%%
 
-\begin{frame}{Application Personnelle: Objectifs \& Rapport à la ville}
+\begin{frame}{2.1 Application Personnelle: Objectifs}
 
 
 \begin{itemize}
@@ -507,9 +505,6 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 	\begin{itemize}
 		\item Classification de texte
 		\item Sentiment : Négatif $\longleftrightarrow$ Positif
-	\end{itemize}
-	\item \textbf{Rapport à la ville :}
-	\begin{itemize}
 		\item Analyser les sentiments des habitants sur différents sujets
 		\item Peut servir à aider par exemple les mairies pour déterminer ce qui est le plus urgent
 	\end{itemize}
@@ -521,10 +516,10 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 %%%%%%%%% PAGE 9 : Le modèle BERT %%%%%%%%%
 
-\begin{frame}{Le modèle BERT}
+\begin{frame}{2.2 Le modèle BERT}
 
 \begin{itemize}
-	\item Architecture Transformer
+	\item Architecture Transformer (Encodeur seulement)
 	\item Plusieurs tailles de BERT (base, large)
 	\item BERT base : $12 \times$ blocks encoder $\to 112$M paramètres 
 	\item BooksCorpus (800M words) and English Wikipedia (2,500M words)
@@ -536,7 +531,7 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 %%%%%%%%% PAGE 10 : La structure du réseau de neurone utilisée %%%%%%%%%
 
-\begin{frame}{La structure du réseau de neurone utilisée}
+\begin{frame}{2.3 La structure du réseau de neurone utilisée}
 
 
 \begin{center}
@@ -554,10 +549,10 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 ]
 
 %Blocks
-\node (Inp) {``Input''};
-\node[Block] (BT) [right=25px of Inp] {BERT\\Tokenizer};
-\node[Bblock] (BE) [right=25px of BT] {BERT\\Encoder};
-\node[FFblock] (FFC) [right=25px of BE] {Feed Forward\\Classifier};
+\node (Inp) {``Entrée''};
+\node[Block] (BT) [right=25px of Inp] {Tokenizer\\BERT};
+\node[Bblock] (BE) [right=25px of BT] {Encodeur\\BERT};
+\node[FFblock] (FFC) [right=25px of BE] {Classifieur \\ Feed Forward};
 \node (Out) [right=50px of FFC] {};
 \node[Vect] (Out1) [above=0px of Out] {$ \!\!\! S_{\text{pos}}\quad$};
 \node[Vect] (Out2) [below=0px of Out] {$\!\!\! S_{\text{neg}}  \quad$};
@@ -579,7 +574,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 
 %%%%%%%%% PAGE 11 : Les données et l'apprentissage %%%%%%%%%
 
-\begin{frame}{Les données et l'apprentissage}
+\begin{frame}{2.4 Les données et l'apprentissage}
 
 \begin{itemize}
 	\item \textbf{Données : } Twitter Sentiment140  (1.6 millions Tweets)
@@ -595,7 +590,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 
 %%%%%%%%% PAGE 12 : Les résultats %%%%%%%%%
 
-\begin{frame}{Les résultats}
+\begin{frame}{2.5 Les résultats}
 
 \begin{center}
 \resizebox{!}{(\textheight * 5 / 11)}{
@@ -606,6 +601,24 @@ Twitter news dataset (https://www.kaggle.com)
 
 \end{frame}
 
+
+
+%%%%%%%%% PAGE 13 : Conclusion %%%%%%%%%
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+	\item L'architecture Transformer permet de construire des représentations pertinentes du langage naturel
+	\vspace{8px}
+	\item Plusieurs de tâches sont possibles : Classification, Génération, Traduction, ...
+	\vspace{8px}
+	\item classifieur de texte: analyser les sentiments d'un message
+	\vspace{8px}
+	\item Améliorations possibles: Meilleurs données d'entraînement, modèle plus large, ...
+\end{itemize}
+
+
+\end{frame}
 
 
 %%%%%%%%% PAGE 13 : Annexes %%%%%%%%%
@@ -639,7 +652,7 @@ Twitter news dataset (https://www.kaggle.com)
 \textbf{Annexes / Ouvertures :}
 
 \begin{itemize}
-	\item Détails du code python
+	\item Un peu de code python
 	\item Adam optimizer
 	\item La fonction de loss
 	\item La Normalisation par couche (LayerNorm)
@@ -662,8 +675,9 @@ Twitter news dataset (https://www.kaggle.com)
 
 %%%%%%%%% PAGE 14 : Annexe - Python %%%%%%%%%
 
-\begin{frame}[fragile]{Annexes: Code python}
+\begin{frame}[fragile]{Annexes: Code python - Classe Réseau de Neurone}
 \footnotesize
+Structure très simplifiée d'une classe réseau de neurone en pyton avec pytorch : 
 \begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
     auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
 \begin{lstlisting}[language=python]
@@ -684,14 +698,47 @@ class Net(nn.Module):
 
 
 
+\begin{frame}[fragile]{Annexes: Code python - Boucle d'entraînement}
+\vspace{-7px}
+
+\footnotesize
+\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
+    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
+
+\begin{minipage}{\textwidth * 1 / 11}
+\begin{lstlisting}[language=python]
+def train_model(self, epochs):
+  dataloader = Dataloader(self.train_dataset,...)
+  self.model.train()
+  for epoch in range(epochs):
+    for batch, data in dataloader:
+      label = data['target']
+      self.optimizer.zero_grad()
+      output = self.model(
+        ids= data['ids'],
+        mask=data['mask'],
+        token_type_ids=data['token_type_ids'])
+      label = label.type_as(output)
+      loss = self.loss_fn(output,label)
+      loss.backward()
+      self.optimizer.step()
+\end{lstlisting}
+
+\end{minipage}
+\end{tcolorbox}
+\normalsize
+\end{frame}
+
+
+
 %%%%%%%%% PAGE 15 : Annexe - L'algorithme de backpropagation %%%%%%%%%
 
 \begin{frame}{Annexes: Adam Optimizer}
 
 \begin{center}
-	\resizebox{(\textwidth * 10 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	\resizebox{(\textwidth * 23 / 21)}{!}{%{(\textheight * 4 / 17)}{
 	
-	\begin{minipage}{(\textwidth * 24  / 20)}
+	\begin{minipage}{(\textwidth * 26  / 20)}
 		
 		\footnotesize
 		\setlength{\columnsep}{25px}
@@ -712,8 +759,8 @@ class Net(nn.Module):
 		\textbf{Adam : Adaptive Moment Estimation}
 
 		\begin{itemize}
-			\item pour chaque itération : Moyenne mobile exponentielle des valeurs historiques du gradient
-			\item Taux d'apprentissage adaptatif (individuellement pour chaque paramètre) sur la base du 		premier (Moyenne) et deuxième moment (Variance) du gradient
+			\item pour chaque itération : Moyennes pondérées du gradient sur l'historique récent
+			\item Taux d'apprentissage adaptatif (individuellement pour chaque paramètre)
 			\item Correction de biais
 			\item Mise à jour des paramètres
 		\end{itemize}
@@ -733,7 +780,7 @@ class Net(nn.Module):
 
 \begin{frame}{Annexes: Fonction de loss}
 
-Fonction Cross Entropy
+\textbf{Fonction Cross Entropy}
 
 Soit $C_1, \dots, C_N$  $N$ classes . Soit $x = (x_1, \dots, x_N)$ la sortie du modèle.
 Soit $v$ l'indice de la vraie classe.
@@ -759,7 +806,7 @@ Donc au final $CE(x, v) = \frac{1}{N} \sum_{i=1}^N E_i$
 
 \begin{itemize}
 	\item La moyenne $E(X)$ et la Variance $V(X)$ (sur la dimension de l'embedding de l'entrée)
-	\item Normalization : $$N_X = \frac{X - E(X)}{\sqrt{V(X)}}$$
+	\item Normalisation : $$N_X = \frac{X - E(X)}{\sqrt{V(X)}}$$
 	\item Mise à l'échelle et décalage : $$N_x \cdot \alpha + \beta$$
 \end{itemize}
 
@@ -780,49 +827,55 @@ $$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + 
 	\begin{minipage}{(\textwidth * 24  / 20)}
 		
 		\footnotesize
-		\setlength{\columnsep}{25px}
+		\setlength{\columnsep}{5px}
 		\begin{multicols*}{2}[]
 
 		\textbf{Fonction Softmax:}\\
 
 		Pour $z = (z_1, \dots, z_N)$
-	
 		$$\text{Softmax}(z) = \left ( \frac{e^{z_i}}{\sum_{k=1}^{N} e^{z_k}} \right )_i$$
-		
 		Pour $i \in [\![1, N]\!]$
+		\vspace{70px}
 
 		\columnbreak
 
 		\textbf{ReLU et GeLU :}
 		
-		\resizebox{!}{\textheight *5 / 10}{
+		\vspace{10px}
+		
+		\resizebox{\textwidth * 6/ 10}{!}{
+		
+		\begin{minipage}{(\textwidth * 15  / 20)}
 		\begin{figure}
 			\centering
-			\begin{tikzpicture}
-				\begin{axis}[
-					xlabel={$x$},
-					ylabel={$y$},
-					axis lines=middle,
-					xmin=-5, xmax=5,
-					ymin=-1, ymax=5,
-					xtick={-5,...,5},
-					ytick={-1,...,5},
-					grid=both,
-					grid style={line width=0.1pt, draw=gray!30},
-					major grid style={line width=0.2pt,draw=gray!50},
-					minor tick num=1,
-					enlargelimits={abs=0.5},
-					width=10cm,
-					height=8cm,
-					]
+\begin{tikzpicture}
+\begin{axis}[
+   xlabel={$x$},
+   ylabel={$y$},
+   axis lines=middle,
+   xmin=-5, xmax=5,
+   ymin=-1, ymax=5,
+   xtick={-5,...,5},
+   ytick={-1,...,5},
+   grid=both,
+   grid style={line width=0.1pt, draw=gray!30},
+   major grid style={line width=0.2pt,draw=gray!50},
+   minor tick num=1,
+   enlargelimits={abs=0.5},
+   width=10cm,
+   height=8cm,
+]
 
-					\addplot[domain=-5:5, samples=100, ultra thick, blue]{max(0,x)};
-					\addplot[domain=-5:5, samples=100, ultra thick, red]{0.5*(1+tanh(sqrt(2/pi)*(x+0.044715*x^3)))};
+\addplot[domain=-5:0, samples=100, thick, blue]{0};
+\addplot[domain=0:5, samples=100, thick, blue]{x};
 
-				\end{axis}
-			\end{tikzpicture}
-			\caption{ReLU and GeLU functions}
+\addplot[domain=-5:5, samples=100, ultra thick, red, dashed]{x/2*(1+tanh(sqrt(2/pi)*(x+0.044715*x^3)))};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Fonctions ReLU et GeLU}
 		\end{figure}
+		\end{minipage}
 		}
 
 
@@ -842,9 +895,9 @@ $$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + 
 
 \begin{center}
 
-\resizebox{!}{(\textheight * 8 / 11)}{%
+\resizebox{!}{(\textheight * 9 / 11)}{%
 \begin{tikzpicture}[
-DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=150px, minimum height=335px},
+DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=180px, minimum height=335px},
 Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
 Ablock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
 FFblock/.style = {rectangle, rounded corners, draw=black!40!orange, fill =orange!10, thick, minimum height = 50px, minimum width = 100px},
@@ -859,15 +912,15 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$x_2$};
 \node[Vect] (Dinp_1) [left=5px of Dinp_2] {$x_1$};
 \node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$x_N$};
-\node (txt_Dinp) [left=5px of Dinp_1] {Input};
+\node (txt_Dinp) [left=5px of Dinp_1] {Entrée};
 
 %Global Encoder Block
 \node[DecBlock] (Dec) [above=10px of Dinp] {};
-\node (Txt_Decoder) [right=8px of Dec] {Decoder Block};
+\node (Txt_Decoder) [right=22px of Dec] {Bloc Decodeur};
 
 % MultiHead Self-Attention Block
-\node[Ablock] (Att) [above=15px of Einp] {MultiHead Self-Attention};
-\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+\node[Ablock] (Att) [above=15px of Einp] {Self-Attention Masquée Multi-tête};
+\node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 %Attention output
 \node (Aout) [above=15px of AN1] {};
@@ -878,17 +931,17 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 % MultiHead Cross-Attention Block
-\node[Ablock] (Catt) [above=15px of Aout] {MultiHead Cross-Attention};
-\node[Block] (AN2) [above=15px of Catt] {Add \& Normalize};
+\node[Ablock] (Catt) [above=15px of Aout] {Cross-Attention Multi-tête};
+\node[Block] (AN2) [above=15px of Catt] {Somme \& Normalise};
 
 % Encoder Output
-\node (Eout) [left = 50px of Catt] {};
+\node (Eout) [left = 80px of Catt] {};
 \node[font=\footnotesize] (Eout_dots) [above=0px of Eout] {$\dots$};
 \node[Vect] (Eout_2) [below=5px of Eout_dots] {$y_2$};
 \node[Vect] (Eout_1) [below=5px of Eout_2] {$y_1$};
 \node[Vect] (Eout_N) [above=5px of Eout_dots] {$y_N$};
 
-\node (Eout_text) [below=7px of Eout_1] {Encoder Output};
+\node (Eout_text) [below=7px of Eout_1] {Sortie de l'Encodeur};
 
 \node [fit=(Eout_1) (Eout_N), draw=green, dashed, thick, inner sep=5pt, rounded corners] (box) {};
   
@@ -902,8 +955,8 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 %FF block
-\node[FFblock] (FF) [above=15px of CAout] {Feed Forward Layer};
-\node[Block] (AN3) [above=15px of FF] {Add \& Normalize};
+\node[FFblock] (FF) [above=15px of CAout] {Couche Feed Forward};
+\node[Block] (AN3) [above=15px of FF] {Somme \& Normalise};
 
 %Decoder Output
 \node (Dout) [above=15px of AN3] {};
@@ -911,7 +964,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node[Vect] (Dout_2) [left=5px of Dout_dots] {$x_2$};
 \node[Vect] (Dout_1) [left=5px of Dout_2] {$x_1$};
 \node[Vect] (Dout_N) [right=5px of Dout_dots] {$x_N$};
-\node (txt_Dout) [left=5px of Dout_1] {Output};
+\node (txt_Dout) [left=5px of Dout_1] {Sortie};
 
 %Arrows
 \draw[Fleche1] (Dinp.north) to (Att.south);
@@ -925,9 +978,9 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \draw[Fleche1] (FF.north) to (AN3.south);
 \draw[Fleche1] (AN3.north) to (Dout.south);
 
-\draw[Fleche1] (Einp_N.east) .. controls +(right:45px) and +(right:45px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN1.east);
-\draw[Fleche1] (Aout_N.east) .. controls +(right:45px) and +(right:45px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN2.east);
-\draw[Fleche1] (CAout_N.east) .. controls +(right:45px) and +(right:45px) .. node[Circ,scale=0.7, fill=white] {$+$} (AN3.east);
+\draw[Fleche1] (Einp_N.east) .. controls +(right:65px) and +(right:65px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN1.east);
+\draw[Fleche1] (Aout_N.east) .. controls +(right:65px) and +(right:65px) ..  node[Circ,scale=0.7, fill=white]{$+$}  (AN2.east);
+\draw[Fleche1] (CAout_N.east) .. controls +(right:65px) and +(right:65px) .. node[Circ,scale=0.7, fill=white] {$+$} (AN3.east);
 \end{tikzpicture}
 }
 \end{center}
@@ -942,17 +995,17 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 \begin{center}
-	\resizebox{(\textwidth * 8 / 10)}{!}{%{(\textheight * 4 / 17)}{
+	\resizebox{(\textwidth * 9 / 10)}{!}{%{(\textheight * 4 / 17)}{
 	
 	\begin{minipage}{(\textwidth * 24  / 20)}
 		
-		\footnotesize
-		\setlength{\columnsep}{35px}
+		\small
+		\setlength{\columnsep}{15px}
 		\begin{multicols*}{2}[]
 
 			\textbf{Architecture:}
 			\begin{itemize}
-				\item BERT : Encodeur - Décodeur
+				\item BERT : Encodeur seulement
 				\item GPT : Decodeur seulement
 			\end{itemize}
 			
@@ -967,6 +1020,8 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 				\item BERT : Classification, Traduction
 				\item GPT : Génération de texte
 			\end{itemize}
+			
+			\vspace{50px}
 
 			\columnbreak
 
@@ -990,15 +1045,15 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 			\node[Vect] (Dinp_2) [left=5px of Dinp_dots] {$x_2$};
 			\node[Vect] (Dinp_1) [left=5px of Dinp_2] {$x_1$};
 			\node[Vect] (Dinp_N) [right=5px of Dinp_dots] {$x_N$};
-			\node (txt_Dinp) [left=5px of Dinp_1] {Input};
+			\node (txt_Dinp) [left=5px of Dinp_1] {Entrée};
 
 			%Global Encoder Block
 			\node[DecBlock] (Dec) [above=10px of Einp] {};
-			\node (Txt_Decoder) [left=8px of Dec] {Decoder Block};
+			\node (Txt_Decoder) [left=8px of Dec] {Bloc Décodeur};
 
 			% MultiHead Self-Attention Block
-			\node[Ablock] (Att) [above=15px of Dinp] {\textbf{Masked} MultiHead Self-Attention};
-			\node[Block] (AN1) [above=15px of Att] {Add \& Normalize};
+			\node[Ablock] (Att) [above=15px of Dinp] {Self-Attention Masquée Multi-Tête};
+			\node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 			%Attention output
 			\node (Aout) [above=15px of AN1] {};
@@ -1008,8 +1063,8 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 			\node[Vect] (Aout_N) [right=5px of Aout_dots] {$x_N$};
 
 			%FF block
-			\node[FFblock] (FF) [above=15px of Aout] {Feed Forward Layer};
-			\node[Block] (AN2) [above=15px of FF] {Add \& Normalize};
+			\node[FFblock] (FF) [above=15px of Aout] {Couche Feed Forward};
+			\node[Block] (AN2) [above=15px of FF] {Somme \& Normalise};
 
 			%Encoder Output
 			\node (Eout) [above=15px of AN2] {};
@@ -1017,7 +1072,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 			\node[Vect] (Eout_2) [left=5px of Eout_dots] {$x_2$};
 			\node[Vect] (Eout_1) [left=5px of Eout_2] {$x_1$};
 			\node[Vect] (Eout_N) [right=5px of Eout_dots] {$x_N$};
-			\node (txt_Eout) [left=5px of Eout_1] {Output};
+			\node (txt_Eout) [left=5px of Eout_1] {Sortie};
 
 			%Arrows
 			\draw[Fleche1] (Einp.north) to (Att.south);

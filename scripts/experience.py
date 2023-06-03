@@ -174,8 +174,8 @@ class Experience:
         batch_size = 8
         #
         #data_sampler = RandomSampler(self.train_dataset, num_samples=100)
-        dataloader = DataLoader(self.train_dataset, batch_size, shuffle=True)
         #test_sampler = RandomSampler(self.test_dataset, num_samples=50)
+        dataloader = DataLoader(self.train_dataset, batch_size, shuffle=True)
         testloader = DataLoader(self.test_dataset, batch_size)
         #
         print("Preparing the model to train...")
