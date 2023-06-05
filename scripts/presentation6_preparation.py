@@ -1,3 +1,7 @@
+
+""" File: `application_preparation.py`"""
+
+
 print("Importing libraries...")
 from tqdm import tqdm
 import json

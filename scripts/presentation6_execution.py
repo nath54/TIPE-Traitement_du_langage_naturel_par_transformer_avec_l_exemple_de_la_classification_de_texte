@@ -1,3 +1,7 @@
+
+""" File: `application_execution.py`"""
+
+
 print("Importing libraries...")
 import sys
 sys.path.insert(1, "../experiences/TwitterExperience/")
@@ -85,7 +89,7 @@ for t in themes:
             score_neg = unres[0]
             score_pos = unres[1]
 
-            if abs(score_pos - score_neg) < 0.60:
+            if abs(score_pos - score_neg) < 0.50:
                 res = "NEU"
             elif score_pos > score_neg:
                 res = "POS"

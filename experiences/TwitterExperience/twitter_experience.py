@@ -1,4 +1,6 @@
 
+""" File: `twitter_experience.py`"""
+
 import sys
 sys.path.insert(1, "../../scripts/")
 from experience import *
@@ -35,7 +37,7 @@ class ClassifierFF(nn.Module):
         #
         # Linear function
         self.lin1 = nn.Linear(768, 7680*2)
-        # Non-linearity
+        # Activation Function
         self.nl1 = nn.ReLU()
         # Linear function (readout)
         self.lin2 = nn.Linear(7680*2, 2)
@@ -60,6 +62,4 @@ if __name__ == "__main__":
     experience = Experience("twitter_experience_model4", classifier_model, 2, "train", train, test)
 
     experience.train_model(5)
-
-    # experience.save_model_state()
 
