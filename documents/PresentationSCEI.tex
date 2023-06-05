@@ -21,9 +21,15 @@
 \usetikzlibrary{positioning} % Add this line to load the positioning library
 \usetikzlibrary{fit}
 \usetikzlibrary{shapes}
+\usetikzlibrary{matrix}
 \usetikzlibrary{arrows}
 \pgfplotsset{compat=1.16}
 \usepgfplotslibrary{statistics}
+
+\makeatletter
+\def\pgf@matrix@last@nextcell@options{}
+\makeatother
+
 
 \usepackage{listings}
 \usepackage{tcolorbox}
@@ -87,8 +93,8 @@ scale=2
 %Nodes
 
 %Encoder Blocks
-\node[Block] (Tok) {Tokenizer};
-\node[Block, align=center] (EPE)  [above=15px of Tok] {Embedding + \\Encodage Positionnel};
+\node[Block] (Tok) {Analyseur Lexical};
+\node[Block, align=center] (EPE)  [above=15px of Tok] {Représentation Vectorielle + \\Encodage Positionnel};
 \node[Eblock] (Enc1) [above=15px of EPE] {Encodeur $1$};
 \node[Eblock] (Enc2) [above=15px of Enc1] {Encodeur $2$};
 \node (dots1) [above=15px of Enc2] {$\dots$};
@@ -151,84 +157,58 @@ scale=2
 
 %%%%%%%%% PAGE 3 : Tokenisation & Embeddings %%%%%%%%%
 
-\begin{frame}{1.1 Vectorisation du texte : Tokenisation du texte}
+\begin{frame}{1.1 Vectorisation du texte : Analyse Lexicale}
 
-\textbf{Tokenizer (bert-base-uncased)}
+\textbf{Analyseur lexical (bert-base-uncased)}
 
 \textbf{Ex1 : }
 
-\ \textit{SENTENCE} : ``Neural Networks are so cool!''\\
+\ \textit{PHRASE} : ``Neural Networks are so cool!''\\
 \ \textit{TOKENS} : $\begin{array}{ll} [101, 15756, 6125, 2024, 2061, 4658, 999, 102, 0, \dots, 0] \\ \footnotesize \text{[CLS]} \  \text{``neural''} \ \text{``networks''}\  \text{``are''} \ \text{``so''} \ \text{``cool''} \ \text{``!''} \ \text{[SEP]}  \end{array}$
 
 \vspace{15px}
 
 \textbf{Ex2 : }
 
-\ \textit{SENTENCE} : ``Bonjour le monde!''\\
+\ \textit{PHRASE} : ``Bonjour le monde!''\\
 \ \textit{TOKENS} : $\begin{array}{ll} [101, 14753, 23099, 2099, 3393, 23117, 999, 102, 0, \dots, 0] \\ \footnotesize \text{[CLS]} \  \text{``bon''} \ \text{``\#\#jou''}\  \text{``\#\#r''} \ \text{``le''} \ \text{``monde''} \ \text{``!''} \ \text{[SEP]}  \end{array}$
 
 \end{frame}
 
 
 %%%%%%%%% PAGE 4 : Embeddings + Positional Encoding %%%%%%%%%
-\begin{frame}{1.1 Vectorisation du texte : Embeddings \& Encodage Positionnel}
-
-
-\begin{center}
-	\resizebox{(\textwidth * 4 / 5)}{!}{%{(\textheight * 4 / 17)}{
-	
-	\begin{minipage}{(\textwidth * 21  / 20)}
-		
-		\setlength{\columnsep}{80pt}
-	
-		\begin{multicols}{2}[]
-		
-		\textbf{Encodage Positionnel}\\
-		
-		$k \in [\![1, N]\!]$
-		$$p_k  = (f_k(1), f_k(2), \dots, f_k(d_E))$$
-		$f_k(i)$ : position de chaque token dans la séquence
-		
-		\columnbreak
-		
-		\textbf{Token Embedding}
-		
-		$$t_k \longrightarrow \underbrace{(e_{k, 0}, \dots, e_{k, d_E})}_{\text{dimension } d_E}$$
-		
-		\end{multicols}
-	\end{minipage}
-	}
-\end{center}
+\begin{frame}{1.1 Vectorisation du texte : Représentation Vectoriel \& Encodage Positionnel}
 
 \begin{center}
-\resizebox{!}{(\textheight * 7 / 18)}{
+\resizebox{!}{(\textheight * 12 / 18)}{
 \begin{tikzpicture}[
 Fleche1/.style = {->, thick, shorten <=5px, shorten >=5px}
 ]
 
 %Blocks
 
-%\node (Sentence) {Sentence};
 \node (Tokens) {Tokens};
-\node (TokensT) [below=0px of Tokens] {$T = [t_1, \dots, t_N] \quad$};
+\node (MatrixT) [below=5px of Tokens, fill=gray!13] {$T = \begin{bmatrix} t_{1} \\ \vdots \\  t_{N} \end{bmatrix}$};
 \node (EmptySpace) [right=80px of Tokens] {};
 \node (TokenEmbedding) [above=15px of EmptySpace] {Token Embedding};
-\node (EmbeddingE) [above=0px of TokenEmbedding] {$E = [e_1, \dots, e_N]$};
+\node (EmbeddingE) [above=0px of TokenEmbedding, fill=gray!13] {$E = \begin{bmatrix} e_{1, 1} & \dots & e_{1, d_E} \\ \dots \\  e_{N, 1} & \dots & e_{N, d_E} \end{bmatrix}$};
 \node (PositionalEncoding) [below=15px of EmptySpace] {Encodage Positionnel};
-\node (PositionalP) [below=0px of PositionalEncoding] {$P = [p_1, \dots, p_N]$};
+\node (PositionalP) [below=0px of PositionalEncoding, fill=gray!13] {$P = \begin{bmatrix} p_{1, 1} & \dots & p_{1, d_E} \\ \dots \\  p_{N, 1} & \dots & p_{N, d_E} \end{bmatrix}$};
 \node (LayerNorm) [right=80px of EmptySpace] {LayerNormalization $(E + P)$};
-%\node (Model) [right=15px of LayerNorm] {Model};
+\node (SinusoidalCurves) [right=5px of PositionalP] {};
 
-  \node [fit=(TokensT) (LayerNorm) (EmbeddingE) (PositionalP), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
+% Sinusoidal curves
+\begin{scope}[xshift=180px, yshift=-40px, yscale=0.08, xscale=0.1, every node/.append style={text=red}]
+    \foreach \i in {1,...,5}{
+        \draw[domain=0:4*pi, variable=\x, color=red, yshift=-120*\i px] plot ({\x}, {sin(\x*20*\i});
+    }
+\end{scope}
 
 %Fleches
-
-% \draw[Fleche1] (Sentence.east) to (Tokens.west);
 \draw[Fleche1] (Tokens.east) to (TokenEmbedding.west);
 \draw[Fleche1] (Tokens.east) to (PositionalEncoding.west);
 \draw[Fleche1] (TokenEmbedding.east) to (LayerNorm.west);
 \draw[Fleche1] (PositionalEncoding.east) to (LayerNorm.west);
-%\draw[Fleche1] (LayerNorm.east) to (Model.west);
 
 \end{tikzpicture}
 }
@@ -267,7 +247,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node (Txt_Encoder) [left=8px of Enc] {Bloc Encodeur};
 
 % MultiHead Self-Attention Block
-\node[Ablock] (Att) [above=15px of Einp] {Self-Attention Multi-Tête};
+\node[Ablock] (Att) [above=15px of Einp] {Attention Propre};
 \node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 %Attention output
@@ -322,7 +302,7 @@ Circ/.style = {circle, draw=black, thick},
 Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 ]
 
-\node (X) {$X$};
+\node (X) {$Entree$};
 \node (dimX) [below=0px of X] {$(N, d_E)$};
 \node[fit=(X) (dimX), draw=black, thick, rounded corners, inner sep=5px] (boxX) {};
 
@@ -348,24 +328,26 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node (V) [below=25px of Empty2] {$V$};
 \node (dimV) [below=0px of V] {$(N, d_k)$};
 
-\node (softmax) [right=75px of Empty1] {$\displaystyle \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )$};
-\node[fit=(softmax), draw=black, fill=yellow!20!, thick, rounded corners, inner sep=10px] (boxS) {};
-\node (softmax) [right=75px of Empty1] {$\displaystyle \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )$};
+\node (softmax) [right=75px of Empty1] {D};
+\node (dimD) [below=0px of softmax] {$(N, N)$};
+\node[fit=(softmax) (dimD), draw=black, fill=yellow!20!, thick, rounded corners, inner sep=10px] (boxS) {};
+\node (dimD) [below=0px of softmax] {$(N, N)$};
+\node (softmax) [right=75px of Empty1] {D};
 
 \node (Empty3) [below=10px of softmax] {};
 
-\node (Y) [below right=5px and 75px of boxS] {$Y$};
+\node (Y) [below right=5px and 75px of boxS] {$Sortie$};
 \node (dimY) [below=0px of Y] {$(N, d_E)$};
 \node[fit=(Y) (dimY), draw=black, thick, rounded corners, inner sep=5px] (boxY) {};
 
-\node (form) [below right=85px and -65px of Empty3] {\large$\text{Attention}(Q, K, V) = \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )V$};
+\node (form) [below right=105px and -35px of Empty3] {\large$\text{Sortie} = \text{softmax} \left ( \frac{QK^\top}{\sqrt{d_k}} \right )V$};
 
   \node [fit=(form), draw=red, thick, inner sep=5pt, rounded corners] (box) {};
 
 
-\draw[Fleche1] (boxX.east) to node[left] {$\cdot W_Q$} (boxQ.west);
-\draw[Fleche1] (boxX.east) to node[above] {$\cdot W_K$} (boxK.west);
-\draw[Fleche1] (boxX.east) to node[left] {$\cdot W_V$} (boxV.west);
+\draw[Fleche1] (boxX.east) to node[left] {$\times W_Q$} (boxQ.west);
+\draw[Fleche1] (boxX.east) to node[above] {$\times W_K$} (boxK.west);
+\draw[Fleche1] (boxX.east) to node[left] {$\times W_V$} (boxV.west);
 \draw[Fleche1] (boxQ.east) to (boxS.west);
 \draw[Fleche1] (boxK.east) to (boxS.west);
 \draw[Fleche1] (boxS.east) to (boxY.west);
@@ -499,15 +481,12 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 \begin{frame}{2.1 Application Personnelle: Objectifs}
 
-
+\textbf{Objectif :}
 \begin{itemize}
-	\item \textbf{Objectif :}
-	\begin{itemize}
-		\item Classification de texte
-		\item Sentiment : Négatif $\longleftrightarrow$ Positif
-		\item Analyser les sentiments des habitants sur différents sujets
-		\item Peut servir à aider par exemple les mairies pour déterminer ce qui est le plus urgent
-	\end{itemize}
+	\item Classification de texte
+	\item Sentiment : Négatif $\longleftrightarrow$ Positif
+	\item Analyser les sentiments des habitants sur différents sujets
+	\item Peut aider les mairies à prioritiser certains efforts
 \end{itemize}
 
 
@@ -516,13 +495,12 @@ Couche linéaire : $X \mapsto X\cdot W^\top + B$
 
 %%%%%%%%% PAGE 9 : Le modèle BERT %%%%%%%%%
 
-\begin{frame}{2.2 Le modèle BERT}
+\begin{frame}{2.2 BERT (Bidirectional Encoder Representations from Transformers)}
 
 \begin{itemize}
-	\item Architecture Transformer (Encodeur seulement)
-	\item Plusieurs tailles de BERT (base, large)
+	\item Architecture Transformer Particulière (Encodeur seulement)
 	\item BERT base : $12 \times$ blocks encoder $\to 112$M paramètres 
-	\item BooksCorpus (800M words) and English Wikipedia (2,500M words)
+	\item BooksCorpus (800M words) et English Wikipedia (2,500M words)
 	\item Publié vers fin 2018 par des chercheurs de Google
 \end{itemize}
 
@@ -550,7 +528,7 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 
 %Blocks
 \node (Inp) {``Entrée''};
-\node[Block] (BT) [right=25px of Inp] {Tokenizer\\BERT};
+\node[Block] (BT) [right=25px of Inp] {Analyseur Lexical\\de BERT};
 \node[Bblock] (BE) [right=25px of BT] {Encodeur\\BERT};
 \node[FFblock] (FFC) [right=25px of BE] {Classifieur \\ Feed Forward};
 \node (Out) [right=50px of FFC] {};
@@ -578,10 +556,10 @@ Fleche2/.style = {->, thick, shorten <=5px, shorten >= 20px},
 
 \begin{itemize}
 	\item \textbf{Données : } Twitter Sentiment140  (1.6 millions Tweets)
-	\item Train : 50000, Test : 25000
+	\item Entraînement : 50000, Test : 25000
 	\item \textbf{Temps d'entraînement : } $\approx$ 5h
-	\item \textbf{Algorithme d'apprentissage : } Adam optimizer (extension de la descente de gradient stochastique)
-	\item \textbf{Fonction de Loss : } CrossEntropy
+	\item \textbf{Algorithme d'apprentissage : } Optimiseur Adam  (extension de la descente de gradient stochastique)
+	\item \textbf{Fonction de \textit{Loss} : } \textit{CrossEntropy}
 \end{itemize}
 
 \end{frame}
@@ -612,7 +590,7 @@ Twitter news dataset (https://www.kaggle.com)
 	\vspace{8px}
 	\item Plusieurs de tâches sont possibles : Classification, Génération, Traduction, ...
 	\vspace{8px}
-	\item classifieur de texte: analyser les sentiments d'un message
+	\item Classifieur de texte: analyser les satisfactions des habitants
 	\vspace{8px}
 	\item Améliorations possibles: Meilleurs données d'entraînement, modèle plus large, ...
 \end{itemize}
@@ -652,14 +630,14 @@ Twitter news dataset (https://www.kaggle.com)
 \textbf{Annexes / Ouvertures :}
 
 \begin{itemize}
-	\item Un peu de code python
-	\item Adam optimizer
-	\item La fonction de loss
-	\item La Normalisation par couche (LayerNorm)
-	\item Fonctions Softmax et GeLU
+	\item Optimiseur Adam
+	\item La fonction de \textit{loss}
+	\item La Normalisation par couche (\textit{LayerNorm})
+	\item Fonctions \textit{Softmax} et \textit{GeLU}
 	\item La partie décodeur
 	\item Comparaison avec le modèle GPT
 	\item Bibliographie
+	\item Le code python
 \end{itemize}
 
 \end{multicols*}
@@ -670,65 +648,6 @@ Twitter news dataset (https://www.kaggle.com)
 
 
 \end{frame}
-
-
-
-%%%%%%%%% PAGE 14 : Annexe - Python %%%%%%%%%
-
-\begin{frame}[fragile]{Annexes: Code python - Classe Réseau de Neurone}
-\footnotesize
-Structure très simplifiée d'une classe réseau de neurone en pyton avec pytorch : 
-\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
-    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
-\begin{lstlisting}[language=python]
-import torch.nn as nn
-
-class Net(nn.Module):  
-    def __init__(self, dim_in, dim_out):
-        super().__init__()
-        #
-        self.layer = nn.Linear(dim_in, dim_out)
-
-    def forward(self, x):
-        return self.layer(x)
-\end{lstlisting}
-\end{tcolorbox}
-\normalsize
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Annexes: Code python - Boucle d'entraînement}
-\vspace{-7px}
-
-\footnotesize
-\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
-    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
-
-\begin{minipage}{\textwidth * 1 / 11}
-\begin{lstlisting}[language=python]
-def train_model(self, epochs):
-  dataloader = Dataloader(self.train_dataset,...)
-  self.model.train()
-  for epoch in range(epochs):
-    for batch, data in dataloader:
-      label = data['target']
-      self.optimizer.zero_grad()
-      output = self.model(
-        ids= data['ids'],
-        mask=data['mask'],
-        token_type_ids=data['token_type_ids'])
-      label = label.type_as(output)
-      loss = self.loss_fn(output,label)
-      loss.backward()
-      self.optimizer.step()
-\end{lstlisting}
-
-\end{minipage}
-\end{tcolorbox}
-\normalsize
-\end{frame}
-
 
 
 %%%%%%%%% PAGE 15 : Annexe - L'algorithme de backpropagation %%%%%%%%%
@@ -848,32 +767,32 @@ $$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + 
 		\begin{minipage}{(\textwidth * 15  / 20)}
 		\begin{figure}
 			\centering
-\begin{tikzpicture}
-\begin{axis}[
-   xlabel={$x$},
-   ylabel={$y$},
-   axis lines=middle,
-   xmin=-5, xmax=5,
-   ymin=-1, ymax=5,
-   xtick={-5,...,5},
-   ytick={-1,...,5},
-   grid=both,
-   grid style={line width=0.1pt, draw=gray!30},
-   major grid style={line width=0.2pt,draw=gray!50},
-   minor tick num=1,
-   enlargelimits={abs=0.5},
-   width=10cm,
-   height=8cm,
-]
-
-\addplot[domain=-5:0, samples=100, thick, blue]{0};
-\addplot[domain=0:5, samples=100, thick, blue]{x};
-
-\addplot[domain=-5:5, samples=100, ultra thick, red, dashed]{x/2*(1+tanh(sqrt(2/pi)*(x+0.044715*x^3)))};
-
-\end{axis}
-\end{tikzpicture}
-\caption{Fonctions ReLU et GeLU}
+				\begin{tikzpicture}
+				\begin{axis}[
+				   xlabel={$x$},
+				   ylabel={$y$},
+				   axis lines=middle,
+				   xmin=-5, xmax=5,
+				   ymin=-1, ymax=5,
+				   xtick={-5,...,5},
+				   ytick={-1,...,5},
+				   grid=both,
+				   grid style={line width=0.1pt, draw=gray!30},
+				   major grid style={line width=0.2pt,draw=gray!50},
+				   minor tick num=1,
+				   enlargelimits={abs=0.5},
+				   width=10cm,
+				   height=8cm,
+				]
+				
+				\addplot[domain=-5:0, samples=100, thick, blue]{0};
+				\addplot[domain=0:5, samples=100, thick, blue]{x};
+				
+				\addplot[domain=-5:5, samples=100, ultra thick, red, dashed]{x/2*(1+tanh(sqrt(2/pi)*(x+0.044715*x^3)))};
+				
+				\end{axis}
+				\end{tikzpicture}
+				\caption{Fonctions ReLU et GeLU}
 		\end{figure}
 		\end{minipage}
 		}
@@ -897,7 +816,7 @@ $$\text{LayerNorm(X)} = \frac{X - E(X)}{\sqrt{V(X)}+\varepsilon} \cdot \alpha + 
 
 \resizebox{!}{(\textheight * 9 / 11)}{%
 \begin{tikzpicture}[
-DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=180px, minimum height=335px},
+DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=160px, minimum height=335px},
 Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
 Ablock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
 FFblock/.style = {rectangle, rounded corners, draw=black!40!orange, fill =orange!10, thick, minimum height = 50px, minimum width = 100px},
@@ -919,7 +838,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \node (Txt_Decoder) [right=22px of Dec] {Bloc Decodeur};
 
 % MultiHead Self-Attention Block
-\node[Ablock] (Att) [above=15px of Einp] {Self-Attention Masquée Multi-tête};
+\node[Ablock] (Att) [above=15px of Einp] {Attention Propre Masquée};
 \node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 %Attention output
@@ -931,7 +850,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 
 % MultiHead Cross-Attention Block
-\node[Ablock] (Catt) [above=15px of Aout] {Cross-Attention Multi-tête};
+\node[Ablock] (Catt) [above=15px of Aout] {Attention Croisée};
 \node[Block] (AN2) [above=15px of Catt] {Somme \& Normalise};
 
 % Encoder Output
@@ -1003,6 +922,9 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 		\setlength{\columnsep}{15px}
 		\begin{multicols*}{2}[]
 
+			\textit{GPT} : Generative Pre-trained Transformer\\
+			\textit{BERT} : Bidirectional Encoder Representation from Transformers
+
 			\textbf{Architecture:}
 			\begin{itemize}
 				\item BERT : Encodeur seulement
@@ -1030,7 +952,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 
 			\resizebox{!}{(\textheight * 10  / 11)}{%
 			\begin{tikzpicture}[
-				DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=160px, minimum height=206px},
+				DecBlock/.style = {rectangle, rounded corners, draw=blue!30, fill=blue!5, thick, dashed, minimum width=140px, minimum height=206px},
 				Block/.style =  {rectangle,  rounded corners, draw=black!100, fill =white!0, thick, minimum width = 80px},
 				Ablock/.style = {rectangle, rounded corners, draw=black!40!blue, fill =blue!10, thick, minimum height = 50px, minimum width = 100px},
 				FFblock/.style = {rectangle, rounded corners, draw=black!40!orange, fill =orange!10, thick, minimum height = 50px, minimum width = 100px},
@@ -1052,7 +974,7 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 			\node (Txt_Decoder) [left=8px of Dec] {Bloc Décodeur};
 
 			% MultiHead Self-Attention Block
-			\node[Ablock] (Att) [above=15px of Dinp] {Self-Attention Masquée Multi-Tête};
+			\node[Ablock] (Att) [above=15px of Dinp] {Attention Propre Masquée};
 			\node[Block] (AN1) [above=15px of Att] {Somme \& Normalise};
 
 			%Attention output
@@ -1113,6 +1035,65 @@ Fleche1/.style = {->, thick, shorten <=5px, shorten >= 5px},
 \end{itemize}
 
 \end{frame}
+
+
+%%%%%%%%% PAGE 14 : Annexe - Python %%%%%%%%%
+
+\begin{frame}[fragile]{Annexes: Code python - Classe Réseau de Neurone}
+\footnotesize
+Structure très simplifiée d'une classe réseau de neurone en pyton avec pytorch : 
+\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
+    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
+\begin{lstlisting}[language=python]
+import torch.nn as nn
+
+class Net(nn.Module):  
+    def __init__(self, dim_in, dim_out):
+        super().__init__()
+        #
+        self.layer = nn.Linear(dim_in, dim_out)
+
+    def forward(self, x):
+        return self.layer(x)
+\end{lstlisting}
+\end{tcolorbox}
+\normalsize
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Annexes: Code python - Boucle d'entraînement}
+\vspace{-7px}
+
+\footnotesize
+\begin{tcolorbox}[colback=white,boxsep=2mm,arc=1pt,
+    auto outer arc,left=1mm,right=1mm,top=1mm,bottom=1mm,boxrule=0.5pt,width=\textwidth]
+
+\begin{minipage}{\textwidth * 1 / 11}
+\begin{lstlisting}[language=python]
+def train_model(self, epochs):
+  dataloader = Dataloader(self.train_dataset,...)
+  self.model.train()
+  for epoch in range(epochs):
+    for batch, data in dataloader:
+      label = data['target']
+      self.optimizer.zero_grad()
+      output = self.model(
+        ids= data['ids'],
+        mask=data['mask'],
+        token_type_ids=data['token_type_ids'])
+      label = label.type_as(output)
+      loss = self.loss_fn(output,label)
+      loss.backward()
+      self.optimizer.step()
+\end{lstlisting}
+
+\end{minipage}
+\end{tcolorbox}
+\normalsize
+\end{frame}
+
+
 
 
 \end{document}
